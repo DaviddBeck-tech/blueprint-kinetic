@@ -10,6 +10,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster } from "sonner";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { FloatingActions } from "@/components/FloatingActions";
@@ -104,6 +105,7 @@ function RootComponent() {
       </main>
       <Footer />
       <FloatingActions />
+      <Toaster position="top-right" richColors />
     </QueryClientProvider>
   );
 }

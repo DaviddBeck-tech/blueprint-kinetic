@@ -69,7 +69,7 @@ function ProjectDetail() {
 
             {p.gallery && (
               <div className="mt-12 grid gap-3 md:grid-cols-2">
-                {p.gallery.map((g, i) => (
+                {p.gallery.map((g: string, i: number) => (
                   <img key={i} src={g} alt={`${p.name} — ${i + 1}`} loading="lazy" className="aspect-[4/3] w-full object-cover" />
                 ))}
               </div>
