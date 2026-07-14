@@ -1,14 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
 import { news } from "@/lib/data";
 import { useLocalize } from "@/lib/localize";
-import { ArrowRight, Search } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import "@/lib/i18n";
 
 const CATS = ["Tất cả", "Tin công ty", "Dự án", "Kiến thức kỹ thuật"];
+const PAGE1_SIZE = 4; // Trang 1: 1 bài nổi bật + 3 bài lưới
+const PAGE_SIZE = 6; // Từ trang 2 trở đi: 6 bài/trang
 
 export const Route = createFileRoute("/tin-tuc")({
   head: () => ({
@@ -34,8 +36,29 @@ function News() {
   const { t } = useTranslation();
   const L = useLocalize();
   const [cat, setCat] = useState("Tất cả");
+  const [page, setPage] = useState(1);
+  const listRef = useRef<HTMLElement>(null);
+
   const filtered = cat === "Tất cả" ? news : news.filter((n) => n.category === cat);
-  const [featured, ...rest] = filtered;
+  const totalPages =
+    filtered.length <= PAGE1_SIZE ? 1 : 1 + Math.ceil((filtered.length - PAGE1_SIZE) / PAGE_SIZE);
+  const currentPage = Math.min(page, totalPages);
+
+  const start = currentPage === 1 ? 0 : PAGE1_SIZE + (currentPage - 2) * PAGE_SIZE;
+  const pageItems = filtered.slice(start, currentPage === 1 ? PAGE1_SIZE : start + PAGE_SIZE);
+
+  // Trang 1: bài đầu là "nổi bật", còn lại vào lưới. Trang 2+: tất cả vào lưới.
+  const featured = currentPage === 1 ? pageItems[0] : undefined;
+  const gridItems = currentPage === 1 ? pageItems.slice(1) : pageItems;
+
+  const selectCat = (c: string) => {
+    setCat(c);
+    setPage(1);
+  };
+  const goTo = (p: number) => {
+    setPage(Math.max(1, Math.min(p, totalPages)));
+    listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <>
@@ -53,12 +76,12 @@ function News() {
         subtitle={t("news.hero.subtitle")}
       />
 
-      <section className="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-20">
+      <section ref={listRef} className="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-20">
         <div className="flex flex-wrap gap-2 border-b border-border pb-6">
           {CATS.map((c) => (
             <button
               key={c}
-              onClick={() => setCat(c)}
+              onClick={() => selectCat(c)}
               className={`mono-label border px-3 py-1.5 ${cat === c ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground"}`}
             >
               {t(`news.categories.${c}`)}
@@ -80,7 +103,17 @@ function News() {
                 params={{ slug: featured.slug }}
                 className="group block border-b border-border pb-12"
               >
-                <div className="mono-label text-primary">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl">
+                  <img
+                    src={featured.image}
+                    alt={L(featured.title, featured.titleEn)}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none"
+                  />
+                  <div className="absolute inset-x-0 top-0 h-0.75 bg-primary" />
+                </div>
+                <div className="mono-label mt-6 text-primary">
                   — {t("news.featured.badge")} ·{" "}
                   {L(featured.category, featured.categoryEn).toUpperCase()}
                 </div>
@@ -95,14 +128,23 @@ function News() {
             )}
 
             <div className="mt-12 grid gap-10 sm:grid-cols-2">
-              {rest.map((n) => (
+              {gridItems.map((n) => (
                 <Link
                   key={n.slug}
                   to="/tin-tuc/$slug"
                   params={{ slug: n.slug }}
                   className="group block"
                 >
-                  <div className="mono-label text-primary">
+                  <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                    <img
+                      src={n.image}
+                      alt={L(n.title, n.titleEn)}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none"
+                    />
+                  </div>
+                  <div className="mono-label mt-4 text-primary">
                     {L(n.category, n.categoryEn).toUpperCase()}
                   </div>
                   <div className="mt-3 font-display text-2xl font-bold leading-tight transition-colors group-hover:text-primary">
@@ -113,6 +155,45 @@ function News() {
                 </Link>
               ))}
             </div>
+
+            {totalPages > 1 && (
+              <nav
+                aria-label="Pagination"
+                className="mt-14 flex flex-wrap items-center justify-center gap-2 border-t border-border pt-10"
+              >
+                <button
+                  type="button"
+                  onClick={() => goTo(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="mono-label flex items-center gap-1 border border-border px-3 py-1.5 transition-colors hover:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" /> {t("news.pagination.prev")}
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => goTo(p)}
+                    aria-current={p === currentPage ? "page" : undefined}
+                    className={`mono-label border px-3.5 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                      p === currentPage
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border hover:border-foreground"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => goTo(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="mono-label flex items-center gap-1 border border-border px-3 py-1.5 transition-colors hover:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border"
+                >
+                  {t("news.pagination.next")} <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </nav>
+            )}
           </motion.div>
 
           <motion.aside
@@ -142,7 +223,7 @@ function News() {
                 {CATS.slice(1).map((c) => (
                   <li key={c}>
                     <button
-                      onClick={() => setCat(c)}
+                      onClick={() => selectCat(c)}
                       className="text-foreground/80 hover:text-primary"
                     >
                       {t(`news.categories.${c}`)}

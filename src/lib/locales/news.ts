@@ -17,6 +17,10 @@ const vi = {
   featured: {
     badge: "NỔI BẬT",
   },
+  pagination: {
+    prev: "Trước",
+    next: "Sau",
+  },
   sidebar: {
     searchLabel: "TÌM KIẾM",
     searchPlaceholder: "Nhập từ khoá...",
@@ -55,6 +59,10 @@ const en: typeof vi = {
   },
   featured: {
     badge: "FEATURED",
+  },
+  pagination: {
+    prev: "Prev",
+    next: "Next",
   },
   sidebar: {
     searchLabel: "SEARCH",

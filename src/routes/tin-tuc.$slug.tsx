@@ -63,7 +63,24 @@ function NewsDetail() {
         </div>
       </section>
 
-      <article className="mx-auto max-w-3xl px-5 pb-24 md:px-10 md:pb-32">
+      <div className="relative mx-auto max-w-5xl px-5 md:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="relative aspect-video w-full overflow-hidden rounded-xl"
+        >
+          <img
+            src={post.image}
+            alt={L(post.title, post.titleEn)}
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-x-0 top-0 h-0.75 bg-primary" />
+        </motion.div>
+      </div>
+
+      <article className="mx-auto max-w-3xl px-5 pb-24 pt-16 md:px-10 md:pb-32 md:pt-20">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -95,7 +112,16 @@ function NewsDetail() {
                 params={{ slug: r.slug }}
                 className="group block"
               >
-                <div className="mono-label text-primary">
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                  <img
+                    src={r.image}
+                    alt={L(r.title, r.titleEn)}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none"
+                  />
+                </div>
+                <div className="mono-label mt-4 text-primary">
                   {L(r.category, r.categoryEn).toUpperCase()}
                 </div>
                 <div className="mt-3 font-display text-xl font-bold leading-tight group-hover:text-primary">

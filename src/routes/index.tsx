@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import heroImg from "@/assets/hero-chiller.jpg";
 import { fields, projects, brands, clients } from "@/lib/data";
+import { BrandLogo } from "@/components/BrandLogo";
 import { useLocalize } from "@/lib/localize";
 import {
   Carousel,
@@ -106,19 +107,6 @@ function Hero() {
               {t("common.freeConsult")}
             </Link>
           </motion.div>
-
-          <div className="mt-14 flex gap-6 border-t border-border pt-6">
-            {[
-              ["10+", t("home.stats.years")],
-              ["35+", t("home.stats.projects")],
-              ["655", t("home.stats.billion")],
-            ].map(([n, l]) => (
-              <div key={l}>
-                <div className="font-mono text-2xl font-semibold tabular md:text-3xl">{n}</div>
-                <div className="mono-label mt-1 text-muted-foreground">{l}</div>
-              </div>
-            ))}
-          </div>
         </div>
 
         <motion.div
@@ -145,7 +133,6 @@ function Hero() {
               <div className="mt-1 font-mono text-lg font-semibold tabular">2,400 RT</div>
             </div>
           </div>
-          <div className="absolute -bottom-3 -right-3 h-24 w-24 border border-primary" />
         </motion.div>
       </div>
     </section>
@@ -539,13 +526,22 @@ function WhyHBH() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: i * 0.05 }}
-                className="py-8"
               >
-                <div className="flex items-baseline gap-6">
-                  <span className="mono-label text-primary">{r.id}</span>
-                  <div>
-                    <div className="font-display text-3xl font-bold">{r.t}</div>
-                    <p className="mt-2 max-w-xl text-secondary-foreground/70">{r.d}</p>
+                <div className="group relative -mx-4 rounded-lg px-4 py-8 transition duration-300 ease-out hover:-translate-y-1 hover:bg-secondary-foreground/5 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-0 top-1/2 h-0 w-0.75 -translate-y-1/2 rounded-full bg-primary transition-all duration-300 ease-out group-hover:h-1/2"
+                  />
+                  <div className="flex items-baseline gap-6">
+                    <span className="mono-label text-primary transition-transform duration-300 group-hover:scale-110">
+                      {r.id}
+                    </span>
+                    <div>
+                      <div className="font-display text-3xl font-bold">{r.t}</div>
+                      <p className="mt-2 max-w-xl text-secondary-foreground/70 transition-colors duration-300 group-hover:text-secondary-foreground/90">
+                        {r.d}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </motion.li>
@@ -569,15 +565,17 @@ function BrandMarquee() {
         {[false, true].map((rev, i) => (
           <div key={i} className="overflow-hidden">
             <div
-              className={`flex gap-16 whitespace-nowrap ${rev ? "marquee-track-reverse" : "marquee-track"}`}
+              className={`flex gap-6 whitespace-nowrap ${rev ? "marquee-track-reverse" : "marquee-track"}`}
             >
               {row.map((b, j) => (
-                <span
-                  key={j}
-                  className="font-display text-4xl font-black tracking-tight text-muted-foreground/40 transition-colors hover:text-primary md:text-6xl"
-                >
-                  {b}
-                </span>
+                <div key={j} className="group flex shrink-0 items-center">
+                  <BrandLogo
+                    name={b.name}
+                    src={b.logo}
+                    className="h-24 min-w-45 md:h-28"
+                    imgClassName="max-h-14 md:max-h-16"
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -599,14 +597,19 @@ function ClientsGrid() {
         <div className="mt-12 grid grid-cols-2 divide-x divide-y divide-border border border-border sm:grid-cols-3 lg:grid-cols-5">
           {clients.map((c, i) => (
             <motion.div
-              key={c}
+              key={c.name}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.04 }}
-              className="grid aspect-[3/2] place-items-center px-6 text-center"
+              className="group grid aspect-3/2 place-items-center p-6 text-center"
             >
-              <span className="font-display text-lg font-bold tracking-tight md:text-xl">{c}</span>
+              <BrandLogo
+                name={c.name}
+                src={c.logo}
+                className="h-16 w-full max-w-40 md:h-20"
+                imgClassName="max-h-10 md:max-h-12"
+              />
             </motion.div>
           ))}
         </div>

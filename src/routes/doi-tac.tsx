@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
-import { brands, clients } from "@/lib/data";
+import { brands, clients, contractors, type BrandLogo as BrandLogoType } from "@/lib/data";
+import { BrandLogo } from "@/components/BrandLogo";
 import { Check } from "lucide-react";
 import "@/lib/i18n";
 
@@ -25,8 +26,6 @@ export const Route = createFileRoute("/doi-tac")({
   }),
   component: Partners,
 });
-
-const CONTRACTORS = ["Coteccons", "Hoà Bình", "Delta", "CC1", "Vinaconex", "Ricons"];
 
 function Partners() {
   const { t } = useTranslation();
@@ -56,12 +55,14 @@ function Partners() {
         mono="INVESTORS · CLIENTS"
         items={clients}
         note={t("partners.clients.note")}
+        gridClass="grid-cols-2 lg:grid-cols-5"
       />
       <PartnerBlock
         title={t("partners.contractors.title")}
         mono="GENERAL · CONTRACTORS"
-        items={CONTRACTORS}
+        items={contractors}
         note={t("partners.contractors.note")}
+        gridClass="grid-cols-2 lg:grid-cols-4"
         accent
       />
 
@@ -115,16 +116,17 @@ function PartnerBlock({
   mono,
   items,
   note,
-  accent,
+  gridClass = "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
 }: {
   title: string;
   mono: string;
-  items: string[];
+  items: BrandLogoType[];
   note: string;
   accent?: boolean;
+  gridClass?: string;
 }) {
   return (
-    <section className={accent ? "border-b border-border" : "border-b border-border"}>
+    <section className="border-b border-border">
       <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-10 md:py-24">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -133,13 +135,20 @@ function PartnerBlock({
           </div>
           <p className="max-w-md text-sm text-muted-foreground">{note}</p>
         </div>
-        <div className="mt-10 grid grid-cols-2 divide-x divide-y divide-border border border-border sm:grid-cols-3 lg:grid-cols-4">
-          {items.map((n) => (
+        <div
+          className={`mt-10 grid divide-x divide-y divide-border border border-border ${gridClass}`}
+        >
+          {items.map((item) => (
             <div
-              key={n}
-              className="grid aspect-[3/2] place-items-center px-6 transition-colors hover:bg-accent"
+              key={item.name}
+              className="group grid aspect-3/2 place-items-center p-6 transition-colors hover:bg-accent"
             >
-              <span className="font-display text-xl font-bold tracking-tight md:text-2xl">{n}</span>
+              <BrandLogo
+                name={item.name}
+                src={item.logo}
+                className="h-16 w-full max-w-40 md:h-20"
+                imgClassName="max-h-11 md:max-h-12"
+              />
             </div>
           ))}
         </div>

@@ -185,30 +185,64 @@ export const fields = [
   },
 ];
 
-export const brands = [
-  "Trane",
-  "Carrier",
-  "Mitsubishi Electric",
-  "LG",
-  "Munters",
-  "Solimpeks",
-  "Daikin",
-  "York",
+export type BrandLogo = { name: string; logo: string };
+
+// Hãng thiết bị / thương hiệu M&E — HBH là đại lý ủy quyền.
+// Logo lưu tại public/logos/*.png (xem README bên dưới để biết tên file tương ứng).
+export const brands: BrandLogo[] = [
+  { name: "Mitsubishi Electric", logo: "/logos/mitsubishi-electric.png" },
+  { name: "Trane", logo: "/logos/trane.png" },
+  { name: "Carrier", logo: "/logos/carrier.png" },
+  { name: "LG", logo: "/logos/lg.png" },
+  { name: "Toshiba", logo: "/logos/toshiba.png" },
+  { name: "Dunham-Bush", logo: "/logos/dunham-bush.png" },
+  { name: "Kruger", logo: "/logos/kruger.png" },
+  { name: "AL-KO", logo: "/logos/al-ko.png" },
+  { name: "Grundfos", logo: "/logos/grundfos.png" },
+  { name: "Wilo", logo: "/logos/wilo.png" },
+  { name: "Signify / Philips", logo: "/logos/signify-philips.png" },
+  { name: "Breeze", logo: "/logos/breeze.png" },
 ];
 
-export const clients = [
-  "Sun Group",
-  "FLC",
-  "TNR",
-  "TTG Holding",
-  "MIK Group",
-  "Mipec",
-  "Splendora",
-  "Dragon Ocean",
-  "Hong Ngoc Hospital",
+// Chủ đầu tư / khách hàng.
+export const clients: BrandLogo[] = [
+  { name: "Sun Group", logo: "/logos/sun-group.png" },
+  { name: "FLC Group", logo: "/logos/flc.png" },
+  { name: "TNR Holdings", logo: "/logos/tnr.png" },
+  { name: "Sunshine Group", logo: "/logos/sunshine-group.png" },
+  { name: "MIK Group", logo: "/logos/mik-group.png" },
+  { name: "TTG Holding", logo: "/logos/ttg-holding.png" },
+  { name: "Mipec", logo: "/logos/mipec.png" },
+  { name: "Splendora", logo: "/logos/splendora.png" },
+  { name: "Dragon Ocean Đồ Sơn", logo: "/logos/dragon-ocean.png" },
+  { name: "Hồng Ngọc Hospital", logo: "/logos/hong-ngoc-hospital.png" },
 ];
 
-export const news = [
+// Tổng thầu xây dựng / đối tác M&E.
+export const contractors: BrandLogo[] = [
+  { name: "Coteccons", logo: "/logos/coteccons.png" },
+  { name: "Ricons", logo: "/logos/ricons.png" },
+  { name: "Hòa Bình", logo: "/logos/hoa-binh.png" },
+  { name: "Delta", logo: "/logos/delta.png" },
+  { name: "REE M&E", logo: "/logos/ree-me.png" },
+  { name: "Hawee", logo: "/logos/hawee.png" },
+  { name: "Tổng công ty 36", logo: "/logos/tong-cong-ty-36.png" },
+  { name: "G.I. Industrial Holding", logo: "/logos/gi-industrial.png" },
+];
+
+export type NewsItem = {
+  slug: string;
+  title: string;
+  titleEn: string;
+  category: string;
+  categoryEn: string;
+  date: string;
+  excerpt: string;
+  excerptEn: string;
+  image: string;
+};
+
+export const news: NewsItem[] = [
   {
     slug: "hbh-ky-hop-dong-benh-vien-108",
     title: "HBH ký hợp đồng cung cấp hệ Chiller cho Bệnh viện 108 mở rộng",
@@ -220,6 +254,7 @@ export const news = [
       "Gói thầu M&E trị giá 128 tỷ VNĐ — HBH tiếp tục là đối tác chiến lược của khối y tế quốc phòng.",
     excerptEn:
       "An M&E package worth 128 billion VND — HBH remains a strategic partner of the defense healthcare sector.",
+    image: hospital,
   },
   {
     slug: "vrf-tiet-kiem-nang-luong",
@@ -232,6 +267,7 @@ export const news = [
       "Phân tích công nghệ inverter DC và thu hồi nhiệt trong các dự án resort tại Việt Nam.",
     excerptEn:
       "An analysis of DC inverter and heat-recovery technology in resort projects across Vietnam.",
+    image: hotel,
   },
   {
     slug: "ban-giao-tnr-goldsilk",
@@ -244,6 +280,7 @@ export const news = [
       "Toàn bộ hệ thống điều hoà & chiếu sáng thông minh 34 tầng đi vào vận hành đúng tiến độ.",
     excerptEn:
       "The entire smart air conditioning & lighting system across 34 floors went into operation on schedule.",
+    image: resort,
   },
   {
     slug: "hop-tac-trane-2026",
@@ -255,5 +292,6 @@ export const news = [
     excerpt: "Chính thức trở thành nhà phân phối ủy quyền cấp cao nhất tại thị trường miền Bắc.",
     excerptEn:
       "Officially becoming the highest-tier authorized distributor in the Northern market.",
+    image: chiller,
   },
 ];
