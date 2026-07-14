@@ -1,6 +1,7 @@
 import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
+import i18n, { parseLang } from "./lib/i18n";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -17,6 +18,12 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
+// Đặt ngôn ngữ SSR theo cookie của request để HTML server render khớp với client (tránh lệch hydration).
+const langMiddleware = createMiddleware().server(async ({ next, request }) => {
+  await i18n.changeLanguage(parseLang(request.headers.get("cookie")));
+  return next();
+});
+
 export const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware],
+  requestMiddleware: [errorMiddleware, langMiddleware],
 }));

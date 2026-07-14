@@ -2,34 +2,64 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { PageHero } from "@/components/PageHero";
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
+import "@/lib/i18n";
 import hospital from "@/assets/project-hospital.jpg";
 import factory from "@/assets/project-factory.jpg";
 import resort from "@/assets/project-resort.jpg";
 import chiller from "@/assets/hero-chiller.jpg";
 
-const SERVICES = [
-  { id: "01", t: "Thi công lắp đặt M&E", d: "Đội ngũ thi công chuyên trách cho từng hệ thống — điều hoà, nước nóng, chiếu sáng, thông gió — đảm bảo tiến độ tổng thầu và tiêu chuẩn kỹ thuật quốc tế.", img: hospital },
-  { id: "02", t: "Bảo trì & Vận hành", d: "Hợp đồng bảo trì định kỳ 6–12 tháng, hotline kỹ thuật 24/7, đội ngũ ứng cứu trong 4 giờ tại khu vực Hà Nội và các tỉnh lân cận.", img: chiller },
-  { id: "03", t: "Tư vấn giải pháp", d: "Khảo sát, phân tích tải, mô phỏng năng lượng, đề xuất phương án tối ưu chi phí đầu tư ban đầu (CAPEX) và chi phí vận hành dài hạn (OPEX).", img: factory },
-  { id: "04", t: "Phân phối thiết bị chính hãng", d: "Đại lý ủy quyền của Trane, Carrier, Mitsubishi Electric, LG, Munters, Solimpeks — CO/CQ đầy đủ, bảo hành theo hãng.", img: resort },
-];
-
 export const Route = createFileRoute("/dich-vu")({
-  head: () => ({
-    meta: [
-      { title: "Dịch vụ — HBH Vietnam" },
-      { name: "description", content: "Bốn nhóm dịch vụ HBH: thi công M&E, bảo trì vận hành, tư vấn giải pháp và phân phối thiết bị chính hãng." },
-      { property: "og:title", content: "Dịch vụ — HBH Vietnam" },
-      { property: "og:description", content: "Bốn nhóm dịch vụ HBH: thi công M&E, bảo trì vận hành, tư vấn giải pháp và phân phối thiết bị chính hãng." },
-    ],
-  }),
+  head: () => {
+    const title = i18n.t("services.meta.title");
+    const description = i18n.t("services.meta.description");
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+      ],
+    };
+  },
   component: Services,
 });
 
 function Services() {
+  const { t } = useTranslation();
+
+  const SERVICES = [
+    { id: "01", t: t("services.install.t"), d: t("services.install.d"), img: hospital },
+    { id: "02", t: t("services.maintenance.t"), d: t("services.maintenance.d"), img: chiller },
+    { id: "03", t: t("services.consulting.t"), d: t("services.consulting.d"), img: factory },
+    { id: "04", t: t("services.distribution.t"), d: t("services.distribution.d"), img: resort },
+  ];
+
+  const PROCESS = [
+    { id: "01", t: t("services.process.s1.t"), d: t("services.process.s1.d") },
+    { id: "02", t: t("services.process.s2.t"), d: t("services.process.s2.d") },
+    { id: "03", t: t("services.process.s3.t"), d: t("services.process.s3.d") },
+    { id: "04", t: t("services.process.s4.t"), d: t("services.process.s4.d") },
+    { id: "05", t: t("services.process.s5.t"), d: t("services.process.s5.d") },
+    { id: "06", t: t("services.process.s6.t"), d: t("services.process.s6.d") },
+    { id: "07", t: t("services.process.s7.t"), d: t("services.process.s7.d") },
+  ];
+
   return (
     <>
-      <PageHero eyebrow="DỊCH VỤ · 04 NHÓM" index="M&E · HVAC · BMS" title={<>Bốn dịch vụ.<br /><span className="italic text-primary">Một cam kết.</span></>} subtitle="Từ tư vấn giai đoạn thiết kế đến bảo trì trong suốt vòng đời công trình." />
+      <PageHero
+        eyebrow={t("services.hero.eyebrow")}
+        index="M&E · HVAC · BMS"
+        title={
+          <>
+            {t("services.hero.titleA")}
+            <br />
+            <span className="italic text-primary">{t("services.hero.titleB")}</span>
+          </>
+        }
+        subtitle={t("services.hero.subtitle")}
+      />
 
       <section className="mx-auto max-w-[1400px] px-5 py-24 md:px-10 md:py-32">
         <ul className="space-y-24 md:space-y-32">
@@ -44,7 +74,14 @@ function Services() {
             >
               <div className={`md:col-span-7 ${i % 2 === 1 ? "md:order-2" : ""}`}>
                 <div className="relative aspect-[16/10] overflow-hidden">
-                  <img src={s.img} alt={s.t} className="h-full w-full object-cover" loading="lazy" width={1200} height={750} />
+                  <img
+                    src={s.img}
+                    alt={s.t}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    width={1200}
+                    height={750}
+                  />
                   <div className="absolute left-4 top-4 border border-white/30 bg-black/60 px-3 py-2 text-white backdrop-blur-sm">
                     <div className="mono-label text-primary/90">SERVICE · {s.id}</div>
                   </div>
@@ -52,10 +89,15 @@ function Services() {
               </div>
               <div className="md:col-span-5">
                 <div className="mono-label text-primary">— {s.id} / 04</div>
-                <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight md:text-5xl">{s.t}</h2>
+                <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight md:text-5xl">
+                  {s.t}
+                </h2>
                 <p className="mt-6 text-lg text-muted-foreground">{s.d}</p>
-                <Link to="/lien-he" className="mono-label mt-8 inline-flex items-center gap-2 text-foreground hover:text-primary">
-                  Yêu cầu tư vấn <ArrowRight className="h-3.5 w-3.5" />
+                <Link
+                  to="/lien-he"
+                  className="mono-label mt-8 inline-flex items-center gap-2 text-foreground hover:text-primary"
+                >
+                  {t("services.requestConsult")} <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </motion.li>
@@ -63,12 +105,50 @@ function Services() {
         </ul>
       </section>
 
+      {/* 7-step service process */}
+      <section className="border-y border-border">
+        <div className="mx-auto max-w-[1400px] px-5 py-24 md:px-10 md:py-32">
+          <div className="mono-label text-primary">{t("services.process.eyebrow")}</div>
+          <h2 className="mt-4 font-display text-4xl font-extrabold md:text-6xl">
+            {t("services.process.heading")}
+          </h2>
+
+          <ol className="relative mt-16 border-l border-border pl-8 md:pl-12">
+            {PROCESS.map((s, i) => (
+              <motion.li
+                key={s.id}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.45, delay: i * 0.05 }}
+                className="relative pb-12 last:pb-0"
+              >
+                <span
+                  aria-hidden
+                  className="absolute -left-8 top-1.5 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-primary ring-4 ring-background md:-left-12"
+                />
+                <div className="mono-label text-primary">
+                  {t("services.process.step")} {s.id}
+                </div>
+                <div className="mt-2 font-display text-2xl font-bold md:text-3xl">{s.t}</div>
+                <p className="mt-2 max-w-xl text-muted-foreground">{s.d}</p>
+              </motion.li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
       <section className="border-y border-border bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-10 md:py-24">
           <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
-            <h2 className="font-display text-4xl font-extrabold md:text-6xl lg:col-span-8">Cần báo giá cho dự án của bạn?</h2>
-            <Link to="/lien-he" className="inline-flex items-center gap-2 justify-self-start bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 lg:col-span-4 lg:justify-self-end">
-              Yêu cầu báo giá <ArrowRight className="h-4 w-4" />
+            <h2 className="font-display text-4xl font-extrabold md:text-6xl lg:col-span-8">
+              {t("services.cta.heading")}
+            </h2>
+            <Link
+              to="/lien-he"
+              className="inline-flex items-center gap-2 justify-self-start bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 lg:col-span-4 lg:justify-self-end"
+            >
+              {t("common.quote")} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

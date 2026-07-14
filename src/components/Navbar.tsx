@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, X, Moon, Sun, ChevronDown, Layers, Wrench } from "lucide-react";
+import { Menu, X, ChevronDown, Layers, Wrench } from "lucide-react";
+import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import "@/lib/i18n";
+import { Logo } from "@/components/Logo";
+import { setLanguage } from "@/lib/i18n";
 
 const NAV = [
   { to: "/gioi-thieu", key: "about" as const, hasMenu: true },
@@ -12,11 +14,21 @@ const NAV = [
   { to: "/lien-he", key: "contact" as const },
 ];
 
+/** Mobile nav: mega-menu items (Lĩnh vực · Dịch vụ) trở thành mục ngang hàng, đặt ngay sau Dự án. */
+const MOBILE_NAV = [
+  { to: "/gioi-thieu", key: "about" as const },
+  { to: "/du-an", key: "projects" as const },
+  { to: "/linh-vuc-kinh-doanh", key: "fields" as const },
+  { to: "/dich-vu", key: "services" as const },
+  { to: "/doi-tac", key: "partners" as const },
+  { to: "/tin-tuc", key: "news" as const },
+  { to: "/lien-he", key: "contact" as const },
+];
+
 export function Navbar() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [dark, setDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -26,47 +38,40 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    const stored = localStorage.getItem("hbh-theme");
-    const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark = stored ? stored === "dark" : prefers;
-    setDark(isDark);
-    document.documentElement.classList.toggle("dark", isDark);
-  }, []);
-
-  const toggleDark = () => {
-    const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("hbh-theme", next ? "dark" : "light");
-  };
-
-  const toggleLang = () => {
-    const next = i18n.language === "vi" ? "en" : "vi";
-    i18n.changeLanguage(next);
-    localStorage.setItem("hbh-lang", next);
-  };
-
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-background/85 backdrop-blur-xl border-b border-border shadow-[0_1px_0_hsl(var(--foreground)/0.04)]"
-          : "bg-transparent"
-      }`}
-    >
+    <>
+      {/* Overlay mờ nền khi mở menu mobile — bấm ra ngoài để đóng (nằm dưới header z-50) */}
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+        />
+      )}
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+          scrolled || open
+            ? "bg-background/85 backdrop-blur-xl border-b border-border shadow-[0_1px_0_hsl(var(--foreground)/0.04)]"
+            : "bg-transparent"
+        }`}
+      >
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-20 md:px-10">
-        <Link to="/" className="group flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center bg-primary text-primary-foreground font-display text-lg font-black">
-            H
-          </span>
-          <span className="font-display text-xl font-extrabold tracking-tight">HBH</span>
-          <span className="mono-label hidden text-muted-foreground sm:inline">Vietnam</span>
+        <Link to="/" aria-label="HBH Vietnam — Trang chủ" className="flex items-center">
+          <Logo className="h-11 w-auto md:h-14" />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
           {NAV.map((item) => (
-            <div key={item.to} className="relative" onMouseEnter={() => item.hasMenu && setMenuOpen(true)} onMouseLeave={() => item.hasMenu && setMenuOpen(false)}>
+            <div
+              key={item.to}
+              className="relative"
+              onMouseEnter={() => item.hasMenu && setMenuOpen(true)}
+              onMouseLeave={() => item.hasMenu && setMenuOpen(false)}
+            >
               <Link
                 to={item.to}
                 className="group relative flex items-center gap-1 px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground"
@@ -79,8 +84,18 @@ export function Navbar() {
               {item.hasMenu && menuOpen && (
                 <div className="absolute left-0 top-full w-[420px] pt-2">
                   <div className="grid gap-1 border border-border bg-popover p-2 shadow-xl">
-                    <MegaItem to="/linh-vuc-kinh-doanh" icon={<Layers className="h-4 w-4" />} label={t("nav.fields")} desc="6 nhóm giải pháp M&E · HVAC · BMS" />
-                    <MegaItem to="/dich-vu" icon={<Wrench className="h-4 w-4" />} label={t("nav.services")} desc="Thi công, bảo trì, tư vấn, phân phối chính hãng" />
+                    <MegaItem
+                      to="/linh-vuc-kinh-doanh"
+                      icon={<Layers className="h-4 w-4" />}
+                      label={t("nav.fields")}
+                      desc="6 nhóm giải pháp M&E · HVAC · BMS"
+                    />
+                    <MegaItem
+                      to="/dich-vu"
+                      icon={<Wrench className="h-4 w-4" />}
+                      label={t("nav.services")}
+                      desc="Thi công, bảo trì, tư vấn, phân phối chính hãng"
+                    />
                   </div>
                 </div>
               )}
@@ -89,45 +104,116 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button onClick={toggleLang} className="mono-label hidden rounded border border-border px-2 py-1 text-foreground/70 hover:text-foreground md:block">
-            {i18n.language === "vi" ? "VI · EN" : "EN · VI"}
-          </button>
-          <button onClick={toggleDark} aria-label="Toggle theme" className="grid h-9 w-9 place-items-center rounded-full border border-border text-foreground/70 hover:text-foreground">
-            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
+          <LangToggle className="hidden md:inline-flex" layoutId="lang-pill-desktop" />
           <Link
             to="/lien-he"
             className="hidden bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 md:inline-block"
           >
             {t("nav.cta")}
           </Link>
-          <button onClick={() => setOpen(!open)} className="grid h-9 w-9 place-items-center lg:hidden" aria-label="Menu">
+          <button
+            onClick={() => setOpen(!open)}
+            className="grid h-9 w-9 place-items-center lg:hidden"
+            aria-label="Menu"
+          >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
-      {open && (
-        <div className="border-t border-border bg-background lg:hidden">
-          <div className="mx-auto flex max-w-[1400px] flex-col px-5 py-4">
-            {NAV.map((item) => (
-              <Link key={item.to} to={item.to} onClick={() => setOpen(false)} className="py-3 font-medium">
-                {t(`nav.${item.key}`)}
-              </Link>
-            ))}
-            <Link to="/linh-vuc-kinh-doanh" onClick={() => setOpen(false)} className="py-3 pl-4 text-sm text-muted-foreground">— {t("nav.fields")}</Link>
-            <Link to="/dich-vu" onClick={() => setOpen(false)} className="py-3 pl-4 text-sm text-muted-foreground">— {t("nav.services")}</Link>
+        {open && (
+          <div className="relative z-50 border-t border-border bg-background lg:hidden">
+            <div className="mx-auto flex max-w-[1400px] flex-col px-5 py-4">
+              {MOBILE_NAV.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setOpen(false)}
+                  className="py-3 font-medium"
+                >
+                  {t(`nav.${item.key}`)}
+                </Link>
+              ))}
+              <div className="mt-3 flex items-center gap-3 border-t border-border pt-4">
+                <span className="mono-label text-muted-foreground">NGÔN NGỮ</span>
+                <LangToggle layoutId="lang-pill-mobile" />
+              </div>
+            </div>
           </div>
-        </div>
-      )}
-    </header>
+        )}
+      </header>
+    </>
   );
 }
 
-function MegaItem({ to, icon, label, desc }: { to: string; icon: React.ReactNode; label: string; desc: string }) {
+/** Segmented language toggle (VI · EN) — thumb mực trượt mượt, giữ đỏ cho CTA (rule 60-30-10). */
+function LangToggle({
+  className = "",
+  layoutId = "lang-pill",
+}: {
+  className?: string;
+  layoutId?: string;
+}) {
+  const { i18n } = useTranslation();
+  const current = i18n.language?.startsWith("en") ? "en" : "vi";
+  const setLang = (lng: "vi" | "en") => {
+    if (lng === current) return;
+    setLanguage(lng);
+  };
   return (
-    <Link to={to} className="flex items-start gap-3 rounded-md p-3 transition-colors hover:bg-accent">
-      <span className="grid h-9 w-9 shrink-0 place-items-center border border-border bg-background text-primary">{icon}</span>
+    <div
+      role="group"
+      aria-label="Chọn ngôn ngữ"
+      className={`relative inline-flex items-center border border-border bg-muted/40 p-0.5 ${className}`}
+    >
+      {(["vi", "en"] as const).map((lng) => {
+        const active = current === lng;
+        return (
+          <button
+            key={lng}
+            type="button"
+            onClick={() => setLang(lng)}
+            aria-pressed={active}
+            aria-label={lng === "vi" ? "Tiếng Việt" : "English"}
+            className={`relative z-0 cursor-pointer px-3 py-1 mono-label transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${
+              active ? "text-background" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {active && (
+              <motion.span
+                layoutId={layoutId}
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 bg-foreground shadow-sm"
+                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+              />
+            )}
+            <span className="relative">{lng.toUpperCase()}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function MegaItem({
+  to,
+  icon,
+  label,
+  desc,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  desc: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="flex items-start gap-3 rounded-md p-3 transition-colors hover:bg-accent"
+    >
+      <span className="grid h-9 w-9 shrink-0 place-items-center border border-border bg-background text-primary">
+        {icon}
+      </span>
       <span className="min-w-0">
         <span className="block text-sm font-semibold">{label}</span>
         <span className="mt-0.5 block text-xs text-muted-foreground">{desc}</span>
