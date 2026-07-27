@@ -1,4 +1,9 @@
 const vi = {
+  meta: {
+    title: "Đối tác — HBH Vietnam",
+    description:
+      "Hệ sinh thái đối tác của HBH — hãng thiết bị, nhà đầu tư và tổng thầu xây dựng hàng đầu Việt Nam.",
+  },
   hero: {
     eyebrow: "ĐỐI TÁC · HỆ SINH THÁI",
     titleLead: "Hệ sinh thái",
@@ -43,6 +48,11 @@ const vi = {
 };
 
 const en: typeof vi = {
+  meta: {
+    title: "Partners — HBH Vietnam",
+    description:
+      "HBH's partner ecosystem — leading equipment brands, investors and general contractors in Vietnam.",
+  },
   hero: {
     eyebrow: "PARTNERS · ECOSYSTEM",
     titleLead: "A trusted",

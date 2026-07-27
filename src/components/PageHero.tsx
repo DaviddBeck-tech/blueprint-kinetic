@@ -2,9 +2,10 @@
 
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { LocaleLink as Link } from "@/components/LocaleLink";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { stripLocale } from "@/lib/i18n-routing";
 
 const CRUMB_KEYS: Record<string, string> = {
   "/gioi-thieu": "nav.about",
@@ -28,8 +29,9 @@ export function PageHero({
   index?: string;
 }) {
   const { t } = useTranslation();
-  const pathname = usePathname();
-  const crumbKey = CRUMB_KEYS[pathname];
+  // Bỏ tiền tố locale để khớp CRUMB_KEYS ở cả 2 ngôn ngữ, đồng thời tránh lệch hydration
+  // (server prerender "/vi/du-an", client thấy "/du-an").
+  const crumbKey = CRUMB_KEYS[stripLocale(usePathname())];
 
   return (
     <section className="relative overflow-hidden border-b border-border pt-32 pb-16 md:pt-40 md:pb-24">

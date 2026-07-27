@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { LocaleLink as Link } from "@/components/LocaleLink";
 import { Phone, Mail, MapPin, Facebook, Linkedin, Youtube } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { fields } from "@/lib/data";

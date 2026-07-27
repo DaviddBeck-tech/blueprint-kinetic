@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, ChevronDown, Layers, Wrench } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { Logo } from "@/components/Logo";
+import { LocaleLink as Link } from "@/components/LocaleLink";
 import { persistLanguage } from "@/lib/i18n";
+import { localePath, stripLocale, type Lang } from "@/lib/i18n-routing";
 
 const NAV = [
   { to: "/gioi-thieu", key: "about" as const, hasMenu: true },
@@ -30,7 +31,9 @@ const MOBILE_NAV = [
 
 export function Navbar() {
   const { t } = useTranslation();
-  const pathname = usePathname();
+  // Bỏ tiền tố locale trước khi so khớp: trang VI prerender ở "/vi/du-an" nhưng
+  // URL trình duyệt là "/du-an" — không strip sẽ lệch hydration ở trạng thái active.
+  const pathname = stripLocale(usePathname());
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -163,11 +166,17 @@ function LangToggle({
   layoutId?: string;
 }) {
   const { i18n } = useTranslation();
-  const current = i18n.language?.startsWith("en") ? "en" : "vi";
-  const setLang = (lng: "vi" | "en") => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const current: Lang = i18n.language?.startsWith("en") ? "en" : "vi";
+
+  // Đổi ngôn ngữ = điều hướng sang URL tương ứng của ĐÚNG trang đang xem:
+  //   /du-an/benh-vien-103  →  /en/du-an/benh-vien-103
+  // Cookie vẫn được ghi để lần sau vào thẳng "/" thì middleware đưa đúng ngôn ngữ.
+  const setLang = (lng: Lang) => {
     if (lng === current) return;
-    i18n.changeLanguage(lng);
     persistLanguage(lng);
+    router.push(localePath(lng, stripLocale(pathname)));
   };
   return (
     <div

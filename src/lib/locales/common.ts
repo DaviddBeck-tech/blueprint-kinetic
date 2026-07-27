@@ -1,4 +1,12 @@
 const vi = {
+  meta: {
+    siteTitle: "HBH Vietnam — Giải pháp M&E · HVAC · BMS toàn diện",
+    siteDescription:
+      "HBH Vietnam Investment JSC — nhà thầu M&E, HVAC, BMS hàng đầu tại Việt Nam. 35+ dự án bệnh viện, quốc phòng, khách sạn – resort với các thương hiệu chính hãng Trane, Carrier, Mitsubishi, LG.",
+    ogTitle: "HBH Vietnam — Building Comfort, Delivering Trust",
+    ogDescription:
+      "Giải pháp M&E toàn diện cho công trình bệnh viện, quốc phòng, khách sạn – resort tại Việt Nam.",
+  },
   nav: {
     about: "Giới thiệu",
     fields: "Lĩnh vực kinh doanh",
@@ -12,7 +20,7 @@ const vi = {
   common: {
     viewAll: "Xem tất cả",
     viewProjects: "Xem Dự Án Tiêu Biểu",
-    freeConsult: "Nhận Tư Vấn Miễn Phí",
+    freeConsult: "Nhận tư vấn thiết kế",
     quote: "Yêu cầu báo giá",
     readMore: "Đọc tiếp",
     year: "Năm",
@@ -37,9 +45,21 @@ const vi = {
     zalo: "Zalo HBH",
     toTop: "Lên đầu trang",
   },
+  notFound: {
+    body: "Trang bạn tìm không tồn tại hoặc đã được di chuyển.",
+    backHome: "Về trang chủ",
+  },
 };
 
 const en: typeof vi = {
+  meta: {
+    siteTitle: "HBH Vietnam — End-to-end M&E · HVAC · BMS solutions",
+    siteDescription:
+      "HBH Vietnam Investment JSC — a leading M&E, HVAC and BMS contractor in Vietnam. 35+ hospital, defense and hotel – resort projects with genuine Trane, Carrier, Mitsubishi and LG equipment.",
+    ogTitle: "HBH Vietnam — Building Comfort, Delivering Trust",
+    ogDescription:
+      "End-to-end M&E solutions for hospital, defense and hotel – resort projects across Vietnam.",
+  },
   nav: {
     about: "About",
     fields: "Business Fields",
@@ -77,6 +97,10 @@ const en: typeof vi = {
     call: "Call HBH",
     zalo: "Zalo HBH",
     toTop: "Back to top",
+  },
+  notFound: {
+    body: "The page you are looking for does not exist or has been moved.",
+    backHome: "Back to home",
   },
 };
 

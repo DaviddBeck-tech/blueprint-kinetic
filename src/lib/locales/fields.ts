@@ -1,5 +1,10 @@
 // Locale module cho trang "fields". Shape: { vi, en } với en: typeof vi.
 const vi = {
+  meta: {
+    title: "Lĩnh vực kinh doanh — HBH Vietnam",
+    description:
+      "6 nhóm giải pháp M&E, HVAC, BMS của HBH — từ điều hoà cục bộ đến chiller trung tâm và hệ điều khiển toà nhà.",
+  },
   hero: {
     eyebrow: "LĨNH VỰC · 06 NHÓM",
     titlePre: "Sáu",
@@ -36,6 +41,11 @@ const vi = {
 };
 
 const en: typeof vi = {
+  meta: {
+    title: "Business Fields — HBH Vietnam",
+    description:
+      "HBH's 6 M&E, HVAC and BMS solution groups — from split air conditioning to central chillers and building management systems.",
+  },
   hero: {
     eyebrow: "FIELDS · 06 GROUPS",
     titlePre: "Six",

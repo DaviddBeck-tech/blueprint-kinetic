@@ -1,5 +1,11 @@
 // Locale module cho trang "news". Shape: { vi, en } với en: typeof vi.
 const vi = {
+  meta: {
+    title: "Tin tức — HBH Vietnam",
+    description:
+      "Tin công ty, cập nhật dự án và kiến thức kỹ thuật M&E · HVAC · BMS từ đội ngũ HBH.",
+    detailFallbackTitle: "Tin tức — HBH Vietnam",
+  },
   hero: {
     eyebrow: "TIN TỨC · EDITORIAL",
     index: "ARCHIVE",
@@ -43,6 +49,12 @@ const vi = {
 };
 
 const en: typeof vi = {
+  meta: {
+    title: "News — HBH Vietnam",
+    description:
+      "Company news, project updates and M&E · HVAC · BMS technical insights from the HBH team.",
+    detailFallbackTitle: "News — HBH Vietnam",
+  },
   hero: {
     eyebrow: "NEWS · EDITORIAL",
     index: "ARCHIVE",
