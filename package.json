@@ -2,6 +2,10 @@
   "name": "hbh-vietnam",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.0.8",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

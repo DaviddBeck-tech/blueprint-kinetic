@@ -1,0 +1,5 @@
+allowBuilds:
+  # sharp: next/image dùng để tối ưu ảnh (cần build script tải binary gốc)
+  sharp: true
+  # unrs-resolver: resolver gốc của eslint-import-resolver
+  unrs-resolver: true
