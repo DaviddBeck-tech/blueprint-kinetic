@@ -1,32 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { motion } from "motion/react";
 import { PageHero } from "@/components/PageHero";
 import { ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import i18n from "i18next";
-import "@/lib/i18n";
-import hospital from "@/assets/project-hospital.jpg";
-import factory from "@/assets/project-factory.jpg";
-import resort from "@/assets/project-resort.jpg";
-import chiller from "@/assets/hero-chiller.jpg";
+import { IMG } from "@/lib/data";
 
-export const Route = createFileRoute("/dich-vu")({
-  head: () => {
-    const title = i18n.t("services.meta.title");
-    const description = i18n.t("services.meta.description");
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-      ],
-    };
-  },
-  component: Services,
-});
+const { hospital, factory, resort, chiller } = IMG;
 
-function Services() {
+export function ServicesView() {
   const { t } = useTranslation();
 
   const SERVICES = [
@@ -94,7 +77,7 @@ function Services() {
                 </h2>
                 <p className="mt-6 text-lg text-muted-foreground">{s.d}</p>
                 <Link
-                  to="/lien-he"
+                  href="/lien-he"
                   className="mono-label mt-8 inline-flex items-center gap-2 text-foreground hover:text-primary"
                 >
                   {t("services.requestConsult")} <ArrowRight className="h-3.5 w-3.5" />
@@ -145,7 +128,7 @@ function Services() {
               {t("services.cta.heading")}
             </h2>
             <Link
-              to="/lien-he"
+              href="/lien-he"
               className="inline-flex items-center gap-2 justify-self-start bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 lg:col-span-4 lg:justify-self-end"
             >
               {t("common.quote")} <ArrowRight className="h-4 w-4" />

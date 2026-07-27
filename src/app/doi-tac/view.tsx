@@ -1,33 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
 import { brands, clients, contractors, type BrandLogo as BrandLogoType } from "@/lib/data";
 import { BrandLogo } from "@/components/BrandLogo";
 import { Check } from "lucide-react";
-import "@/lib/i18n";
 
-export const Route = createFileRoute("/doi-tac")({
-  head: () => ({
-    meta: [
-      { title: "Đối tác — HBH Vietnam" },
-      {
-        name: "description",
-        content:
-          "Hệ sinh thái đối tác của HBH — hãng thiết bị, nhà đầu tư và tổng thầu xây dựng hàng đầu Việt Nam.",
-      },
-      { property: "og:title", content: "Đối tác — HBH Vietnam" },
-      {
-        property: "og:description",
-        content:
-          "Hệ sinh thái đối tác của HBH — hãng thiết bị, nhà đầu tư và tổng thầu xây dựng hàng đầu Việt Nam.",
-      },
-    ],
-  }),
-  component: Partners,
-});
-
-function Partners() {
+export function PartnersView() {
   const { t } = useTranslation();
   return (
     <>

@@ -1,45 +1,15 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { news } from "@/lib/data";
+import { news, type NewsItem } from "@/lib/data";
 import { useLocalize } from "@/lib/localize";
 import { ArrowLeft } from "lucide-react";
-import "@/lib/i18n";
 
-export const Route = createFileRoute("/tin-tuc/$slug")({
-  loader: ({ params }) => {
-    const post = news.find((n) => n.slug === params.slug);
-    if (!post) throw notFound();
-    return { post };
-  },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.post.title} — HBH Vietnam` },
-          { name: "description", content: loaderData.post.excerpt },
-          { property: "og:title", content: loaderData.post.title },
-          { property: "og:description", content: loaderData.post.excerpt },
-        ]
-      : [{ title: "Tin tức — HBH Vietnam" }, { name: "robots", content: "noindex" }],
-  }),
-  component: NewsDetail,
-  notFoundComponent: () => {
-    const { t } = useTranslation();
-    return (
-      <div className="mx-auto max-w-2xl px-5 py-40 text-center">
-        <h1 className="font-display text-4xl font-black">{t("news.detail.notFoundTitle")}</h1>
-        <Link to="/tin-tuc" className="mono-label mt-6 inline-flex text-primary">
-          ← {t("news.detail.backToList")}
-        </Link>
-      </div>
-    );
-  },
-});
-
-function NewsDetail() {
+export function NewsDetailView({ post }: { post: NewsItem }) {
   const { t } = useTranslation();
   const L = useLocalize();
-  const { post } = Route.useLoaderData();
   const related = news.filter((n) => n.slug !== post.slug).slice(0, 3);
 
   return (
@@ -48,7 +18,7 @@ function NewsDetail() {
         <div className="absolute inset-0 blueprint-grid opacity-40" />
         <div className="relative mx-auto max-w-3xl px-5 pb-16 md:px-10 md:pb-24">
           <Link
-            to="/tin-tuc"
+            href="/tin-tuc"
             className="mono-label inline-flex items-center gap-2 text-muted-foreground hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> {t("nav.news")}
@@ -106,12 +76,7 @@ function NewsDetail() {
             className="mt-6 grid gap-8 md:grid-cols-3"
           >
             {related.map((r) => (
-              <Link
-                key={r.slug}
-                to="/tin-tuc/$slug"
-                params={{ slug: r.slug }}
-                className="group block"
-              >
+              <Link key={r.slug} href={`/tin-tuc/${r.slug}`} className="group block">
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                   <img
                     src={r.image}

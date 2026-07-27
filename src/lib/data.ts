@@ -1,9 +1,16 @@
-import hospital from "@/assets/project-hospital.jpg";
-import resort from "@/assets/project-resort.jpg";
-import factory from "@/assets/project-factory.jpg";
-import hotel from "@/assets/project-hotel.jpg";
-import defense from "@/assets/project-defense.jpg";
-import chiller from "@/assets/hero-chiller.jpg";
+// Ảnh nằm trong public/images → tham chiếu bằng đường dẫn tuyệt đối từ web root.
+// (Trước đây import từ src/assets qua Vite; Next.js phục vụ trực tiếp từ public/.)
+export const IMG = {
+  hospital: "/images/project-hospital.jpg",
+  resort: "/images/project-resort.jpg",
+  factory: "/images/project-factory.jpg",
+  hotel: "/images/project-hotel.jpg",
+  defense: "/images/project-defense.jpg",
+  chiller: "/images/hero-chiller.jpg",
+  chairman: "/images/chairman.jpg",
+} as const;
+
+const { hospital, resort, factory, hotel, defense, chiller } = IMG;
 
 export type Project = {
   slug: string;

@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect } from "react";
-import { useRouterState } from "@tanstack/react-router";
+import { usePathname } from "next/navigation";
 import type Lenis from "lenis";
 
 /** Instance dùng chung để nút back-to-top (FloatingActions) cuộn qua Lenis. */
@@ -10,7 +12,7 @@ export function getLenis() {
 
 /** Smooth scroll momentum bằng Lenis. Client-only, tự tắt khi user chọn giảm chuyển động. */
 export function SmoothScroll() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = usePathname();
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -22,7 +24,7 @@ export function SmoothScroll() {
     import("lenis").then(({ default: Lenis }) => {
       if (cancelled) return;
       lenis = new Lenis({
-        lerp: 0.09,          // độ "nặng" của quán tính — nhỏ hơn = mượt/trôi lâu hơn
+        lerp: 0.09, // độ "nặng" của quán tính — nhỏ hơn = mượt/trôi lâu hơn
         wheelMultiplier: 1,
         smoothWheel: true,
         autoRaf: false,

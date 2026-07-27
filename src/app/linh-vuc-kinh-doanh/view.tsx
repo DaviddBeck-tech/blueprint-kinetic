@@ -1,19 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
-import { fields } from "@/lib/data";
+import { fields, IMG } from "@/lib/data";
 import { useLocalize } from "@/lib/localize";
 import { ArrowRight } from "lucide-react";
-import "@/lib/i18n";
-import factory from "@/assets/project-factory.jpg";
-import hospital from "@/assets/project-hospital.jpg";
-import resort from "@/assets/project-resort.jpg";
-import hotel from "@/assets/project-hotel.jpg";
-import defense from "@/assets/project-defense.jpg";
-import chiller from "@/assets/hero-chiller.jpg";
 
-const IMGS = [chiller, hotel, factory, hospital, resort, defense];
+const IMGS = [IMG.chiller, IMG.hotel, IMG.factory, IMG.hospital, IMG.resort, IMG.defense];
 
 const PROCESS = [
   { id: "01", tKey: "fields.process.steps.s1.t", dKey: "fields.process.steps.s1.d" },
@@ -23,27 +18,7 @@ const PROCESS = [
   { id: "05", tKey: "fields.process.steps.s5.t", dKey: "fields.process.steps.s5.d" },
 ];
 
-export const Route = createFileRoute("/linh-vuc-kinh-doanh")({
-  head: () => ({
-    meta: [
-      { title: "Lĩnh vực kinh doanh — HBH Vietnam" },
-      {
-        name: "description",
-        content:
-          "6 nhóm giải pháp M&E, HVAC, BMS của HBH — từ điều hoà cục bộ đến chiller trung tâm và hệ điều khiển toà nhà.",
-      },
-      { property: "og:title", content: "Lĩnh vực kinh doanh — HBH Vietnam" },
-      {
-        property: "og:description",
-        content:
-          "6 nhóm giải pháp M&E, HVAC, BMS của HBH — từ điều hoà cục bộ đến chiller trung tâm và hệ điều khiển toà nhà.",
-      },
-    ],
-  }),
-  component: FieldsPage,
-});
-
-function FieldsPage() {
+export function FieldsView() {
   const { t } = useTranslation();
   const L = useLocalize();
   return (
@@ -149,7 +124,7 @@ function FieldsPage() {
 
         <div className="mt-12">
           <Link
-            to="/lien-he"
+            href="/lien-he"
             className="inline-flex items-center gap-2 bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
           >
             {t("fields.process.cta")} <ArrowRight className="h-4 w-4" />

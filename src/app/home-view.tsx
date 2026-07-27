@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check } from "lucide-react";
-import heroImg from "@/assets/hero-chiller.jpg";
-import { fields, projects, brands, clients } from "@/lib/data";
+import { fields, projects, brands, clients, IMG } from "@/lib/data";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useLocalize } from "@/lib/localize";
 import {
@@ -13,13 +14,10 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import "@/lib/i18n";
 
-export const Route = createFileRoute("/")({
-  component: Home,
-});
+const heroImg = IMG.chiller;
 
-function Home() {
+export function HomeView() {
   return (
     <>
       <Hero />
@@ -94,14 +92,14 @@ function Hero() {
             className="mt-10 flex flex-wrap items-center gap-3"
           >
             <Link
-              to="/du-an"
+              href="/du-an"
               className="group inline-flex cursor-pointer items-center gap-2 bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {t("common.viewProjects")}
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
-              to="/lien-he"
+              href="/lien-he"
               className="inline-flex cursor-pointer items-center gap-2 border border-foreground/20 px-6 py-4 text-sm font-semibold transition-colors hover:border-foreground hover:bg-foreground hover:text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {t("common.freeConsult")}
@@ -258,7 +256,7 @@ function FieldsSection() {
             </h2>
           </div>
           <Link
-            to="/linh-vuc-kinh-doanh"
+            href="/linh-vuc-kinh-doanh"
             className="mono-label inline-flex items-center gap-2 text-foreground hover:text-primary"
           >
             {t("home.fields.allLink")} <ArrowUpRight className="h-4 w-4" />
@@ -398,7 +396,7 @@ function ProjectsScroll() {
         </div>
         <div className="flex items-center gap-4">
           <Link
-            to="/du-an"
+            href="/du-an"
             className="mono-label inline-flex items-center gap-2 hover:text-primary"
           >
             {t("home.projects.viewAllLink")} <ArrowUpRight className="h-4 w-4" />
@@ -438,7 +436,7 @@ function ProjectsScroll() {
           <CarouselContent className="ml-0 2xl:ml-[max(2.5rem,calc(50vw-700px))] 2xl:mr-[max(0rem,calc(50vw-700px))]">
             {projects.map((p) => (
               <CarouselItem key={p.slug} className="max-w-[85vw] pl-5 sm:max-w-[26rem]">
-                <Link to="/du-an/$slug" params={{ slug: p.slug }} className="group block">
+                <Link href={`/du-an/${p.slug}`} className="group block">
                   <div className="relative h-[26rem] overflow-hidden rounded-xl md:h-[30rem]">
                     <img
                       src={p.image}
@@ -640,7 +638,7 @@ function CTABand() {
           <div className="lg:col-span-4">
             <p className="text-secondary-foreground/70">{t("home.cta.subtitle")}</p>
             <Link
-              to="/lien-he"
+              href="/lien-he"
               className="group mt-6 inline-flex cursor-pointer items-center gap-2 bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {t("common.freeConsult")}{" "}

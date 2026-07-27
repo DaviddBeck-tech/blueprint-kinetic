@@ -1,24 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
-import { MapPin, Phone, Mail, Clock, Check, ChevronDown } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
-import i18n from "@/lib/i18n";
-
-export const Route = createFileRoute("/lien-he")({
-  head: () => ({
-    meta: [
-      { title: i18n.t("contact.meta.title") },
-      { name: "description", content: i18n.t("contact.meta.description") },
-      { property: "og:title", content: i18n.t("contact.meta.title") },
-      { property: "og:description", content: i18n.t("contact.meta.ogDescription") },
-    ],
-  }),
-  component: Contact,
-});
 
 const schema = z.object({
   name: z.string().trim().min(2, "contact.errors.name").max(100),
@@ -34,13 +22,12 @@ const schema = z.object({
 
 const SYSTEMS = ["vrf", "chiller", "hotWater", "bms", "lighting", "other"];
 
-// Google reCAPTCHA v2. Thay bằng site key thật của HBH qua biến môi trường VITE_RECAPTCHA_SITE_KEY.
+// Google reCAPTCHA v2. Thay bằng site key thật của HBH qua biến môi trường NEXT_PUBLIC_RECAPTCHA_SITE_KEY.
 // Mặc định dùng test key công khai của Google (luôn pass) để dev/preview không bị chặn.
 const RECAPTCHA_SITE_KEY =
-  (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_RECAPTCHA_SITE_KEY ||
-  "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
 
-function Contact() {
+export function ContactView() {
   const { t } = useTranslation();
   const FAQ = t("contact.faq.items", { returnObjects: true }) as { q: string; a: string }[];
   const [values, setValues] = useState({

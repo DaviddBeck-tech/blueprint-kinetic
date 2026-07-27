@@ -1,11 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { projects, type Project } from "@/lib/data";
 import { PageHero } from "@/components/PageHero";
 import { useLocalize } from "@/lib/localize";
-import i18n from "@/lib/i18n";
 
 const TYPES: { id: Project["type"] | "all" }[] = [
   { id: "all" },
@@ -17,19 +18,7 @@ const TYPES: { id: Project["type"] | "all" }[] = [
 ];
 const SYSTEMS = ["Tất cả", "VRF", "Chiller", "BMS", "Nước nóng"];
 
-export const Route = createFileRoute("/du-an")({
-  head: () => ({
-    meta: [
-      { title: i18n.t("projects.meta.title") },
-      { name: "description", content: i18n.t("projects.meta.description") },
-      { property: "og:title", content: i18n.t("projects.meta.title") },
-      { property: "og:description", content: i18n.t("projects.meta.description") },
-    ],
-  }),
-  component: ProjectsList,
-});
-
-function ProjectsList() {
+export function ProjectsListView() {
   const { t } = useTranslation();
   const L = useLocalize();
   const [type, setType] = useState<Project["type"] | "all">("all");
@@ -122,7 +111,7 @@ function ProjectsList() {
                     transition={{ duration: 0.4 }}
                     className={`group relative ${wide ? "lg:col-span-2" : ""}`}
                   >
-                    <Link to="/du-an/$slug" params={{ slug: p.slug }} className="block h-full">
+                    <Link href={`/du-an/${p.slug}`} className="block h-full">
                       <div className="relative h-full overflow-hidden rounded-xl">
                         <img
                           src={p.image}

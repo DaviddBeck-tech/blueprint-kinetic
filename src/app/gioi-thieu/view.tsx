@@ -1,21 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
-import i18n from "@/lib/i18n";
-import chairman from "@/assets/chairman.jpg";
+import { IMG } from "@/lib/data";
 
-export const Route = createFileRoute("/gioi-thieu")({
-  head: () => ({
-    meta: [
-      { title: i18n.t("about.meta.title") },
-      { name: "description", content: i18n.t("about.meta.description") },
-      { property: "og:title", content: i18n.t("about.meta.title") },
-      { property: "og:description", content: i18n.t("about.meta.description") },
-    ],
-  }),
-  component: About,
-});
+const chairman = IMG.chairman;
 
 const TIMELINE = [
   { year: 2012, t: "about.timeline.items.2012.t", d: "about.timeline.items.2012.d" },
@@ -26,7 +17,7 @@ const TIMELINE = [
   { year: 2026, t: "about.timeline.items.2026.t", d: "about.timeline.items.2026.d" },
 ];
 
-function About() {
+export function AboutView() {
   const { t } = useTranslation();
   return (
     <>
@@ -198,7 +189,7 @@ function About() {
           ].map(([to, title, d]) => (
             <Link
               key={to}
-              to={to}
+              href={to}
               className="group relative overflow-hidden bg-secondary p-10 md:p-16"
             >
               <div className="mono-label text-primary">{t("about.explore.label")}</div>

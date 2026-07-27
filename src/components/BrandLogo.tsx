@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -29,10 +31,7 @@ export function BrandLogo({ name, src, className, imgClassName }: BrandLogoProps
 
   return (
     <div
-      className={cn(
-        "flex items-center justify-center rounded-lg bg-white px-4 py-3",
-        className,
-      )}
+      className={cn("flex items-center justify-center rounded-lg bg-white px-4 py-3", className)}
     >
       <img
         src={src}

@@ -1,10 +1,11 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { Phone, Mail, MapPin, Facebook, Linkedin, Youtube } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { fields } from "@/lib/data";
 import { useLocalize } from "@/lib/localize";
 import { Logo } from "@/components/Logo";
-import "@/lib/i18n";
 
 export function Footer() {
   const { t } = useTranslation();
@@ -49,7 +50,7 @@ export function Footer() {
                 ["/tin-tuc", t("nav.news")],
               ].map(([to, label]) => (
                 <li key={to}>
-                  <Link to={to} className="text-secondary-foreground/70 hover:text-primary">
+                  <Link href={to} className="text-secondary-foreground/70 hover:text-primary">
                     {label}
                   </Link>
                 </li>

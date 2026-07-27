@@ -1,6 +1,9 @@
+"use client";
+
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 const CRUMB_KEYS: Record<string, string> = {
@@ -25,7 +28,7 @@ export function PageHero({
   index?: string;
 }) {
   const { t } = useTranslation();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = usePathname();
   const crumbKey = CRUMB_KEYS[pathname];
 
   return (
@@ -36,7 +39,10 @@ export function PageHero({
           <nav aria-label="Breadcrumb" className="mb-6">
             <ol className="flex items-center gap-2 mono-label">
               <li>
-                <Link to="/" className="text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  href="/"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
                   {t("common.home")}
                 </Link>
               </li>

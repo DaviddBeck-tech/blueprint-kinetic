@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
@@ -6,33 +8,12 @@ import { PageHero } from "@/components/PageHero";
 import { news } from "@/lib/data";
 import { useLocalize } from "@/lib/localize";
 import { ArrowRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
-import "@/lib/i18n";
 
 const CATS = ["Tất cả", "Tin công ty", "Dự án", "Kiến thức kỹ thuật"];
 const PAGE1_SIZE = 4; // Trang 1: 1 bài nổi bật + 3 bài lưới
 const PAGE_SIZE = 6; // Từ trang 2 trở đi: 6 bài/trang
 
-export const Route = createFileRoute("/tin-tuc")({
-  head: () => ({
-    meta: [
-      { title: "Tin tức — HBH Vietnam" },
-      {
-        name: "description",
-        content:
-          "Tin công ty, cập nhật dự án và kiến thức kỹ thuật M&E · HVAC · BMS từ đội ngũ HBH.",
-      },
-      { property: "og:title", content: "Tin tức — HBH Vietnam" },
-      {
-        property: "og:description",
-        content:
-          "Tin công ty, cập nhật dự án và kiến thức kỹ thuật M&E · HVAC · BMS từ đội ngũ HBH.",
-      },
-    ],
-  }),
-  component: News,
-});
-
-function News() {
+export function NewsView() {
   const { t } = useTranslation();
   const L = useLocalize();
   const [cat, setCat] = useState("Tất cả");
@@ -99,8 +80,7 @@ function News() {
           >
             {featured && (
               <Link
-                to="/tin-tuc/$slug"
-                params={{ slug: featured.slug }}
+                href={`/tin-tuc/${featured.slug}`}
                 className="group block border-b border-border pb-12"
               >
                 <div className="relative aspect-video w-full overflow-hidden rounded-xl">
@@ -129,12 +109,7 @@ function News() {
 
             <div className="mt-12 grid gap-10 sm:grid-cols-2">
               {gridItems.map((n) => (
-                <Link
-                  key={n.slug}
-                  to="/tin-tuc/$slug"
-                  params={{ slug: n.slug }}
-                  className="group block"
-                >
+                <Link key={n.slug} href={`/tin-tuc/${n.slug}`} className="group block">
                   <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                     <img
                       src={n.image}
@@ -238,7 +213,7 @@ function News() {
                 {t("news.sidebar.newsletterTitle")}
               </div>
               <Link
-                to="/lien-he"
+                href="/lien-he"
                 className="mt-4 inline-flex items-center gap-2 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
               >
                 {t("news.sidebar.subscribe")} <ArrowRight className="h-4 w-4" />

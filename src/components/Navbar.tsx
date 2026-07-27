@@ -1,10 +1,13 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown, Layers, Wrench } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { Logo } from "@/components/Logo";
-import { setLanguage } from "@/lib/i18n";
+import { persistLanguage } from "@/lib/i18n";
 
 const NAV = [
   { to: "/gioi-thieu", key: "about" as const, hasMenu: true },
@@ -27,6 +30,7 @@ const MOBILE_NAV = [
 
 export function Navbar() {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -59,67 +63,71 @@ export function Navbar() {
             : "bg-transparent"
         }`}
       >
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-20 md:px-10">
-        <Link to="/" aria-label="HBH Vietnam — Trang chủ" className="flex items-center">
-          <Logo className="h-11 w-auto md:h-14" />
-        </Link>
-
-        <nav className="hidden items-center gap-1 lg:flex">
-          {NAV.map((item) => (
-            <div
-              key={item.to}
-              className="relative"
-              onMouseEnter={() => item.hasMenu && setMenuOpen(true)}
-              onMouseLeave={() => item.hasMenu && setMenuOpen(false)}
-            >
-              <Link
-                to={item.to}
-                className="group relative flex items-center gap-1 px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground" }}
-              >
-                {t(`nav.${item.key}`)}
-                {item.hasMenu && <ChevronDown className="h-3 w-3" />}
-                <span className="absolute inset-x-4 -bottom-0.5 h-px origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100" />
-              </Link>
-              {item.hasMenu && menuOpen && (
-                <div className="absolute left-0 top-full w-[420px] pt-2">
-                  <div className="grid gap-1 border border-border bg-popover p-2 shadow-xl">
-                    <MegaItem
-                      to="/linh-vuc-kinh-doanh"
-                      icon={<Layers className="h-4 w-4" />}
-                      label={t("nav.fields")}
-                      desc="6 nhóm giải pháp M&E · HVAC · BMS"
-                    />
-                    <MegaItem
-                      to="/dich-vu"
-                      icon={<Wrench className="h-4 w-4" />}
-                      label={t("nav.services")}
-                      desc="Thi công, bảo trì, tư vấn, phân phối chính hãng"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <LangToggle className="hidden md:inline-flex" layoutId="lang-pill-desktop" />
-          <Link
-            to="/lien-he"
-            className="hidden bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 md:inline-block"
-          >
-            {t("nav.cta")}
+        <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-20 md:px-10">
+          <Link href="/" aria-label="HBH Vietnam — Trang chủ" className="flex items-center">
+            <Logo className="h-11 w-auto md:h-14" />
           </Link>
-          <button
-            onClick={() => setOpen(!open)}
-            className="grid h-9 w-9 place-items-center lg:hidden"
-            aria-label="Menu"
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+
+          <nav className="hidden items-center gap-1 lg:flex">
+            {NAV.map((item) => {
+              const active = pathname === item.to || pathname.startsWith(`${item.to}/`);
+              return (
+                <div
+                  key={item.to}
+                  className="relative"
+                  onMouseEnter={() => item.hasMenu && setMenuOpen(true)}
+                  onMouseLeave={() => item.hasMenu && setMenuOpen(false)}
+                >
+                  <Link
+                    href={item.to}
+                    className={`group relative flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors hover:text-foreground ${
+                      active ? "text-foreground" : "text-foreground/80"
+                    }`}
+                  >
+                    {t(`nav.${item.key}`)}
+                    {item.hasMenu && <ChevronDown className="h-3 w-3" />}
+                    <span className="absolute inset-x-4 -bottom-0.5 h-px origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100" />
+                  </Link>
+                  {item.hasMenu && menuOpen && (
+                    <div className="absolute left-0 top-full w-[420px] pt-2">
+                      <div className="grid gap-1 border border-border bg-popover p-2 shadow-xl">
+                        <MegaItem
+                          to="/linh-vuc-kinh-doanh"
+                          icon={<Layers className="h-4 w-4" />}
+                          label={t("nav.fields")}
+                          desc="6 nhóm giải pháp M&E · HVAC · BMS"
+                        />
+                        <MegaItem
+                          to="/dich-vu"
+                          icon={<Wrench className="h-4 w-4" />}
+                          label={t("nav.services")}
+                          desc="Thi công, bảo trì, tư vấn, phân phối chính hãng"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <LangToggle className="hidden md:inline-flex" layoutId="lang-pill-desktop" />
+            <Link
+              href="/lien-he"
+              className="hidden bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 md:inline-block"
+            >
+              {t("nav.cta")}
+            </Link>
+            <button
+              onClick={() => setOpen(!open)}
+              className="grid h-9 w-9 place-items-center lg:hidden"
+              aria-label="Menu"
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
-      </div>
 
         {open && (
           <div className="relative z-50 border-t border-border bg-background lg:hidden">
@@ -127,7 +135,7 @@ export function Navbar() {
               {MOBILE_NAV.map((item) => (
                 <Link
                   key={item.to}
-                  to={item.to}
+                  href={item.to}
                   onClick={() => setOpen(false)}
                   className="py-3 font-medium"
                 >
@@ -158,7 +166,8 @@ function LangToggle({
   const current = i18n.language?.startsWith("en") ? "en" : "vi";
   const setLang = (lng: "vi" | "en") => {
     if (lng === current) return;
-    setLanguage(lng);
+    i18n.changeLanguage(lng);
+    persistLanguage(lng);
   };
   return (
     <div
@@ -208,7 +217,7 @@ function MegaItem({
 }) {
   return (
     <Link
-      to={to}
+      href={to}
       className="flex items-start gap-3 rounded-md p-3 transition-colors hover:bg-accent"
     >
       <span className="grid h-9 w-9 shrink-0 place-items-center border border-border bg-background text-primary">

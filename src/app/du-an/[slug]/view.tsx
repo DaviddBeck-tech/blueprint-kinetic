@@ -1,55 +1,13 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { projects } from "@/lib/data";
+import { projects, type Project } from "@/lib/data";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useLocalize } from "@/lib/localize";
-import i18n from "@/lib/i18n";
 
-export const Route = createFileRoute("/du-an/$slug")({
-  loader: ({ params }) => {
-    const project = projects.find((p) => p.slug === params.slug);
-    if (!project) throw notFound();
-    return { project };
-  },
-  head: ({ loaderData }) => {
-    const isEn = i18n.language?.startsWith("en");
-    const name = loaderData ? (isEn ? loaderData.project.nameEn : loaderData.project.name) : "";
-    const scope = loaderData ? (isEn ? loaderData.project.scopeEn : loaderData.project.scope) : "";
-    return {
-      meta: loaderData
-        ? [
-            { title: `${name} — HBH Vietnam` },
-            { name: "description", content: scope },
-            { property: "og:title", content: `${name} — HBH Vietnam` },
-            { property: "og:description", content: scope },
-            { property: "og:image", content: loaderData.project.image },
-          ]
-        : [
-            { title: i18n.t("projects.meta.detailFallbackTitle") },
-            { name: "robots", content: "noindex" },
-          ],
-    };
-  },
-  component: ProjectDetail,
-  notFoundComponent: () => {
-    const { t } = useTranslation();
-    return (
-      <div className="mx-auto max-w-2xl px-5 py-40 text-center">
-        <div className="mono-label text-primary">— PROJECT · NOT_FOUND</div>
-        <h1 className="mt-4 font-display text-5xl font-black">
-          {t("projects.detail.notFoundTitle")}
-        </h1>
-        <Link to="/du-an" className="mono-label mt-6 inline-flex text-primary">
-          {t("projects.detail.notFoundBack")}
-        </Link>
-      </div>
-    );
-  },
-});
-
-function ProjectDetail() {
-  const { project: p } = Route.useLoaderData();
+export function ProjectDetailView({ project: p }: { project: Project }) {
   const { t } = useTranslation();
   const L = useLocalize();
   const others = projects.filter((o) => o.slug !== p.slug).slice(0, 3);
@@ -60,7 +18,7 @@ function ProjectDetail() {
         <div className="absolute inset-0 blueprint-grid opacity-50" />
         <div className="relative mx-auto max-w-[1400px] px-5 pb-12 md:px-10 md:pb-16">
           <Link
-            to="/du-an"
+            href="/du-an"
             className="mono-label inline-flex items-center gap-2 text-muted-foreground hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> {t("projects.detail.back")}
@@ -143,7 +101,7 @@ function ProjectDetail() {
                 ))}
               </dl>
               <Link
-                to="/lien-he"
+                href="/lien-he"
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
               >
                 {t("projects.detail.similarCta")} <ArrowRight className="h-4 w-4" />
@@ -164,12 +122,7 @@ function ProjectDetail() {
             className="mt-8 grid gap-6 md:grid-cols-3"
           >
             {others.map((o) => (
-              <Link
-                key={o.slug}
-                to="/du-an/$slug"
-                params={{ slug: o.slug }}
-                className="group block"
-              >
+              <Link key={o.slug} href={`/du-an/${o.slug}`} className="group block">
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <img
                     src={o.image}
