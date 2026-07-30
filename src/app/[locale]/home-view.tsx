@@ -1,13 +1,18 @@
 "use client";
 
 import { LocaleLink as Link } from "@/components/LocaleLink";
-import { motion, useInView, AnimatePresence } from "motion/react";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  AnimatePresence,
+} from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Check } from "lucide-react";
-import { fields, projects, brands, clients, IMG } from "@/lib/data";
+import { IMG } from "@/lib/data";
+import type { Field, Partner, Project } from "@/lib/content/types";
 import { BrandLogo } from "@/components/BrandLogo";
-import { useLocalize } from "@/lib/localize";
 import {
   Carousel,
   CarouselContent,
@@ -17,17 +22,27 @@ import {
 
 const heroImg = IMG.chiller;
 
-export function HomeView() {
+export function HomeView({
+  fields,
+  projects,
+  brands,
+  clients,
+}: {
+  fields: Field[];
+  projects: Project[];
+  brands: Partner[];
+  clients: Partner[];
+}) {
   return (
     <>
       <Hero />
       <StatTicker />
       <Intro />
-      <FieldsSection />
-      <ProjectsScroll />
+      <FieldsSection fields={fields} />
+      <ProjectsScroll projects={projects} />
       <WhyHBH />
-      <BrandMarquee />
-      <ClientsGrid />
+      <BrandMarquee brands={brands} />
+      <ClientsGrid clients={clients} />
       <CTABand />
     </>
   );
@@ -139,10 +154,17 @@ function Hero() {
 
 function CountUp({ end, duration = 1600 }: { end: number; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  // margin phải inset theo trục dọc thôi. "-80px" co cả trái/phải, trên mobile
+  // span hẹp ở cột trái rơi ra ngoài vùng quan sát → inView không bao giờ true → số kẹt ở 0.
+  const inView = useInView(ref, { once: true, margin: "-80px 0px" });
+  const reduceMotion = useReducedMotion();
   const [n, setN] = useState(0);
   useEffect(() => {
     if (!inView) return;
+    if (reduceMotion) {
+      setN(end);
+      return;
+    }
     const start = performance.now();
     let raf = 0;
     const tick = (t: number) => {
@@ -152,36 +174,58 @@ function CountUp({ end, duration = 1600 }: { end: number; duration?: number }) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, end, duration]);
+  }, [inView, end, duration, reduceMotion]);
   return (
-    <span ref={ref} className="tabular">
+    <span
+      ref={ref}
+      className="tabular inline-block"
+      // giữ sẵn bề rộng của giá trị cuối để hậu tố (+ / TỶ) không nhảy khi đang đếm
+      style={{ minWidth: `${end.toLocaleString("vi-VN").length}ch` }}
+    >
       {n.toLocaleString("vi-VN")}
     </span>
   );
 }
 
+/** `plus` = ký hiệu "+" (cùng cỡ với số); `word` = đơn vị bằng chữ (TỶ / BN), luôn nhỏ hơn số. */
+type Stat = { n: number; plus?: boolean; word?: string; unit: string };
+
 function StatTicker() {
   const { t } = useTranslation();
-  const stats = [
-    { n: 10, suffix: "+", unit: t("home.statTicker.expYears") },
-    { n: 35, suffix: "+", unit: t("home.statTicker.largeProjects") },
+  const stats: Stat[] = [
+    { n: 10, plus: true, unit: t("home.statTicker.expYears") },
+    { n: 35, plus: true, unit: t("home.statTicker.largeProjects") },
     {
       n: 655,
-      suffix: t("home.statTicker.billionSuffix"),
+      word: t("home.statTicker.billionSuffix"),
       unit: t("home.statTicker.contractValue"),
     },
-    { n: 4, suffix: "", unit: t("home.statTicker.clientGroups") },
+    { n: 4, unit: t("home.statTicker.clientGroups") },
   ];
   return (
     <section className="border-y border-border bg-background">
-      <div className="mx-auto grid max-w-[1400px] grid-cols-2 divide-x divide-border md:grid-cols-4">
+      {/* gap-px + nền border: kẻ đúng 1px giữa các ô ở mọi số cột, không dư
+          đường thừa ở mép trái hàng 2 như khi dùng divide-x */}
+      <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-px bg-border md:grid-cols-4">
         {stats.map((s) => (
-          <div key={s.unit} className="px-6 py-10 md:px-10 md:py-14">
-            <div className="font-display text-5xl font-black tracking-tight md:text-7xl">
+          <div
+            key={s.unit}
+            className="flex h-full flex-col bg-background px-5 py-8 sm:px-6 md:px-6 md:py-14 lg:px-8 xl:px-10"
+          >
+            {/* Cỡ số giảm dần theo bề rộng cột: md là chỗ chật nhất (4 cột trên 768px) */}
+            <div className="whitespace-nowrap font-display text-4xl font-black leading-none tracking-tight sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
               <CountUp end={s.n} />
-              <span className="text-primary">{s.suffix}</span>
+              {s.plus && <span className="text-primary">+</span>}
+              {s.word && (
+                <span className="ml-[0.14em] text-[0.55em] text-primary">
+                  {s.word.trim()}
+                </span>
+              )}
             </div>
-            <div className="mono-label mt-3 text-muted-foreground">{s.unit}</div>
+            {/* mt-auto: nhãn ghim đáy ô nên nhãn 1 dòng và 2 dòng vẫn thẳng hàng nhau */}
+            <div className="mono-label mt-auto pt-3 text-balance text-muted-foreground md:pt-4">
+              {s.unit}
+            </div>
           </div>
         ))}
       </div>
@@ -238,9 +282,8 @@ function Intro() {
   );
 }
 
-function FieldsSection() {
+function FieldsSection({ fields }: { fields: Field[] }) {
   const { t } = useTranslation();
-  const L = useLocalize();
   const [active, setActive] = useState(0);
   return (
     <section className="relative border-y border-border bg-muted/40">
@@ -278,11 +321,9 @@ function FieldsSection() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-display text-2xl font-bold tracking-tight md:text-3xl">
-                      {L(f.name, f.nameEn)}
+                      {f.name}
                     </span>
-                    <span className="mt-1 block text-sm text-muted-foreground">
-                      {L(f.desc, f.descEn)}
-                    </span>
+                    <span className="mt-1 block text-sm text-muted-foreground">{f.desc}</span>
                   </span>
                   <ArrowRight
                     className={`h-5 w-5 shrink-0 transition-transform ${active === i ? "translate-x-1 text-primary" : ""}`}
@@ -301,8 +342,8 @@ function FieldsSection() {
                 <AnimatePresence>
                   <motion.img
                     key={fields[active].id}
-                    src={fields[active].image}
-                    alt={L(fields[active].name, fields[active].nameEn)}
+                    src={fields[active].image.url}
+                    alt={fields[active].image.alt}
                     className="absolute inset-0 h-full w-full object-cover"
                     initial={{ opacity: 0, scale: 1.06 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -328,12 +369,8 @@ function FieldsSection() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="font-display text-3xl font-bold">
-                    {L(fields[active].name, fields[active].nameEn)}
-                  </div>
-                  <p className="mt-3 text-muted-foreground">
-                    {L(fields[active].desc, fields[active].descEn)}
-                  </p>
+                  <div className="font-display text-3xl font-bold">{fields[active].name}</div>
+                  <p className="mt-3 text-muted-foreground">{fields[active].desc}</p>
                   <div className="mt-6">
                     <div className="mono-label text-muted-foreground">
                       {t("home.fields.partnerBrands")}
@@ -359,9 +396,8 @@ function FieldsSection() {
   );
 }
 
-function ProjectsScroll() {
+function ProjectsScroll({ projects }: { projects: Project[] }) {
   const { t } = useTranslation();
-  const L = useLocalize();
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
@@ -390,7 +426,7 @@ function ProjectsScroll() {
           <div className="mono-label text-primary">{t("home.projects.eyebrow")}</div>
           <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight md:text-6xl">
             {t("home.projects.headingBefore")}
-            <span className="text-primary">35+</span>
+            <span className="text-primary">100+</span>
             {t("home.projects.headingAfter")}
           </h2>
         </div>
@@ -439,8 +475,8 @@ function ProjectsScroll() {
                 <Link href={`/du-an/${p.slug}`} className="group block">
                   <div className="relative h-[26rem] overflow-hidden rounded-xl md:h-[30rem]">
                     <img
-                      src={p.image}
-                      alt={L(p.name, p.nameEn)}
+                      src={p.image.url}
+                      alt={p.image.alt}
                       loading="lazy"
                       width={1200}
                       height={900}
@@ -448,20 +484,16 @@ function ProjectsScroll() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-secondary/95 via-secondary/40 to-transparent" />
                     <div className="absolute left-3 top-3 border border-white/30 bg-black/50 px-2.5 py-1.5 backdrop-blur-sm">
-                      <span className="mono-label text-primary/90">
-                        {L(p.system, p.systemEn)[0]}
-                      </span>
+                      <span className="mono-label text-primary/90">{p.system[0]}</span>
                     </div>
                     <div className="absolute inset-x-0 bottom-0 flex flex-col items-start p-6 text-white md:p-8">
                       <div className="mono-label text-white/70">
-                        {L(p.location, p.locationEn).toUpperCase()} · {p.year}
+                        {p.location.toUpperCase()} · {p.year}
                       </div>
                       <div className="mt-2 font-display text-2xl font-bold leading-tight">
-                        {L(p.name, p.nameEn)}
+                        {p.name}
                       </div>
-                      <p className="mt-2 line-clamp-2 text-sm text-white/75">
-                        {L(p.scope, p.scopeEn)}
-                      </p>
+                      <p className="mt-2 line-clamp-2 text-sm text-white/75">{p.scope}</p>
                       <div className="mt-4 flex items-center text-sm font-medium">
                         {t("home.projects.viewDetail")}{" "}
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -551,8 +583,9 @@ function WhyHBH() {
   );
 }
 
-function BrandMarquee() {
+function BrandMarquee({ brands }: { brands: Partner[] }) {
   const { t } = useTranslation();
+  // Nhân đôi danh sách để marquee cuộn liền mạch không thấy điểm nối.
   const row = [...brands, ...brands];
   return (
     <section className="overflow-hidden py-16 md:py-24">
@@ -569,7 +602,7 @@ function BrandMarquee() {
                 <div key={j} className="group flex shrink-0 items-center">
                   <BrandLogo
                     name={b.name}
-                    src={b.logo}
+                    src={b.logo.url}
                     className="h-24 min-w-45 md:h-28"
                     imgClassName="max-h-14 md:max-h-16"
                   />
@@ -583,7 +616,7 @@ function BrandMarquee() {
   );
 }
 
-function ClientsGrid() {
+function ClientsGrid({ clients }: { clients: Partner[] }) {
   const { t } = useTranslation();
   return (
     <section className="border-y border-border py-24 md:py-32">
@@ -604,7 +637,7 @@ function ClientsGrid() {
             >
               <BrandLogo
                 name={c.name}
-                src={c.logo}
+                src={c.logo.url}
                 className="h-16 w-full max-w-40 md:h-20"
                 imgClassName="max-h-10 md:max-h-12"
               />

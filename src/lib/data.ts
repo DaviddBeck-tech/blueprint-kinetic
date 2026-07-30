@@ -18,7 +18,7 @@ export type Project = {
   nameEn: string;
   client: string;
   clientEn: string;
-  type: "hospital" | "defense" | "hotel" | "infra" | "factory";
+  type: "hospital" | "airport" | "office" | "hotel" | "factory" | "defense" | "infra";
   system: string[];
   systemEn: string[];
   location: string;
@@ -138,57 +138,58 @@ export const projects: Project[] = [
 export const fields = [
   {
     id: "01",
-    name: "Điều hòa cục bộ",
-    nameEn: "Local (split) air conditioning",
-    desc: "Split, Cassette – ứng dụng dân dụng & thương mại quy mô nhỏ.",
-    descEn: "Split, Cassette – for small-scale residential & commercial applications.",
-    brands: ["Daikin", "LG", "Mitsubishi"],
-    image: hotel,
-  },
-  {
-    id: "02",
-    name: "Điều hòa Multi",
-    nameEn: "Multi-split air conditioning",
-    desc: "1 dàn nóng – nhiều dàn lạnh cho căn hộ, biệt thự cao cấp.",
-    descEn: "One outdoor unit – multiple indoor units for apartments and premium villas.",
-    brands: ["Daikin", "Mitsubishi Electric"],
-    image: resort,
-  },
-  {
-    id: "03",
-    name: "VRF trung tâm",
-    nameEn: "Central VRF air conditioning",
-    desc: "Hệ VRV/VRF cho toà nhà văn phòng, khách sạn, bệnh viện.",
-    descEn: "VRV/VRF systems for office buildings, hotels, and hospitals.",
-    brands: ["Daikin", "LG", "Trane"],
-    image: hospital,
-  },
-  {
-    id: "04",
-    name: "Chiller",
-    nameEn: "Chiller",
-    desc: "Chiller giải nhiệt nước & gió cho công trình quy mô lớn.",
-    descEn: "Water-cooled & air-cooled chillers for large-scale projects.",
-    brands: ["Trane", "Carrier", "York"],
+    name: "Hệ thống Điều hòa & Thông gió",
+    nameEn: "HVAC & Ventilation systems",
+    desc: "HVAC, Chiller, VRF và giải pháp kiểm soát môi trường trong nhà.",
+    descEn: "HVAC, chillers, VRF and indoor environment control solutions.",
+    brands: ["Trane", "Mitsubishi Electric", "Kruger"],
     image: chiller,
   },
   {
+    id: "02",
+    name: "Hệ thống Chiếu sáng",
+    nameEn: "Lighting systems",
+    desc: "Chiếu sáng thông minh cho công trình dân dụng, thương mại và công nghiệp.",
+    descEn: "Smart lighting for residential, commercial and industrial projects.",
+    brands: ["Signify / Philips", "Osram"],
+    image: hotel,
+  },
+  {
+    id: "03",
+    name: "Hệ thống Nước nóng trung tâm",
+    nameEn: "Central hot water systems",
+    desc: "Heat Pump và giải pháp nước nóng tiết kiệm năng lượng.",
+    descEn: "Heat pumps and energy-efficient hot water solutions.",
+    brands: ["Mitsubishi Electric", "Solimpeks"],
+    image: resort,
+  },
+  {
+    id: "04",
+    name: "Hệ thống Khí y tế & Vận chuyển mẫu",
+    nameEn: "Medical gas & pneumatic tube systems",
+    desc: "Medical Gas, PTS và hạ tầng kỹ thuật cho bệnh viện hiện đại.",
+    descEn: "Medical gas, PTS and technical infrastructure for modern hospitals.",
+    // TODO(client): xác nhận hãng khí y tế / PTS mà HBH đang là đại lý.
+    brands: ["BeaconMedaes", "Aerocom"],
+    image: hospital,
+  },
+  {
     id: "05",
-    name: "Nước nóng trung tâm",
-    nameEn: "Central hot water",
-    desc: "Heat-pump, năng lượng mặt trời cho resort, bệnh viện.",
-    descEn: "Heat-pump and solar energy for resorts and hospitals.",
-    brands: ["Solimpeks", "Munters"],
-    image: factory,
+    name: "Hệ thống Điện nhẹ & BMS",
+    nameEn: "ELV & BMS systems",
+    desc: "BMS, ELV và nền tảng quản lý vận hành tòa nhà thông minh.",
+    descEn: "BMS, ELV and the operations platform for smart buildings.",
+    brands: ["Schneider Electric"],
+    image: defense,
   },
   {
     id: "06",
-    name: "Chiếu sáng",
-    nameEn: "Lighting",
-    desc: "LED thông minh & chiếu sáng kiến trúc tiết kiệm năng lượng.",
-    descEn: "Smart LED & energy-efficient architectural lighting.",
-    brands: ["Philips", "Osram"],
-    image: defense,
+    name: "Hệ thống Tủ điện & Thiết bị điện",
+    nameEn: "Switchboards & electrical equipment",
+    desc: "Tủ điện, thiết bị đóng cắt và giải pháp phân phối điện Schneider Electric.",
+    descEn: "Switchboards, switchgear and Schneider Electric power distribution solutions.",
+    brands: ["Schneider Electric"],
+    image: factory,
   },
 ];
 

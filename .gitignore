@@ -7,7 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+.pnpm-store/
 *.local
 
 # Next.js
@@ -16,20 +18,45 @@ out/
 next-env.d.ts
 *.tsbuildinfo
 
+# Turbopack / build cache
+.turbo/
+.cache/
+
 # Vercel
 .vercel
 
-# Env
-.env
-.env*.local
+# Env — ignore tất cả, chỉ chừa file mẫu .env.example
+.env*
+!.env.example
+
+# Chứng chỉ / khoá
+*.pem
+*.key
+*.p12
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Lovable — đã migrate sang Next.js, kết nối này không còn dùng
+.lovable/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code — cấu hình cá nhân theo máy
+.claude/settings.local.json
+
+# OS junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/

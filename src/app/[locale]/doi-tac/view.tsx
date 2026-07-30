@@ -3,11 +3,19 @@
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
-import { brands, clients, contractors, type BrandLogo as BrandLogoType } from "@/lib/data";
+import type { Partner } from "@/lib/content/types";
 import { BrandLogo } from "@/components/BrandLogo";
 import { Check } from "lucide-react";
 
-export function PartnersView() {
+export function PartnersView({
+  brands,
+  clients,
+  contractors,
+}: {
+  brands: Partner[];
+  clients: Partner[];
+  contractors: Partner[];
+}) {
   const { t } = useTranslation();
   return (
     <>
@@ -100,7 +108,7 @@ function PartnerBlock({
 }: {
   title: string;
   mono: string;
-  items: BrandLogoType[];
+  items: Partner[];
   note: string;
   accent?: boolean;
   gridClass?: string;
@@ -125,7 +133,7 @@ function PartnerBlock({
             >
               <BrandLogo
                 name={item.name}
-                src={item.logo}
+                src={item.logo.url}
                 className="h-16 w-full max-w-40 md:h-20"
                 imgClassName="max-h-11 md:max-h-12"
               />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { getPartnersByKind } from "@/lib/content";
 import { buildAlternates, isLang } from "@/lib/i18n-routing";
 import { getServerT } from "@/lib/i18n-server";
 
@@ -23,6 +24,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default function Page() {
-  return <PartnersView />;
+export default async function Page({ params }: PageProps) {
+  const { locale } = await params;
+  if (!isLang(locale)) notFound();
+
+  const partners = await getPartnersByKind(locale);
+  return (
+    <PartnersView
+      brands={partners.brand}
+      clients={partners.client}
+      contractors={partners.contractor}
+    />
+  );
 }

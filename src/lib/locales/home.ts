@@ -21,13 +21,13 @@ const vi = {
   },
   intro: {
     eyebrow: "— GIỚI THIỆU · 001",
-    headingBefore: "Nhà thầu cơ điện lạnh ",
+    headingBefore: "Giải pháp cơ điện ",
     headingHighlight: "tin cậy",
     headingAfter: " cho những công trình khó nhất.",
     paragraph:
       "Thành lập năm 2012, HBH Vietnam Investment JSC chuyên cung cấp giải pháp M&E trọn gói — từ khảo sát, thiết kế, cung cấp thiết bị chính hãng đến thi công lắp đặt và vận hành. Chúng tôi đã hoàn thành hơn 35 công trình trọng điểm cho khối y tế, quốc phòng, khách sạn – resort và nhà máy công nghiệp.",
     card1Title: "Chính hãng",
-    card1Desc: "Đại lý ủy quyền Trane, Carrier, Mitsubishi, LG.",
+    card1Desc: "Đại lý ủy quyền Mitsubishi Electric, Trane, Carrier-Toshiba, Panasonic…",
     card2Title: "Trọn gói",
     card2Desc: "Một đầu mối từ tư vấn đến bảo trì dài hạn.",
     card3Title: "35+ dự án",
@@ -45,7 +45,7 @@ const vi = {
   projects: {
     eyebrow: "— DỰ ÁN TIÊU BIỂU",
     headingBefore: "Đã triển khai ",
-    headingAfter: " công trình.",
+    headingAfter: " dự án.",
     viewAllLink: "Xem tất cả dự án",
     prevAria: "Dự án trước",
     nextAria: "Dự án tiếp theo",
@@ -115,7 +115,7 @@ const en: typeof vi = {
     paragraph:
       "Founded in 2012, HBH Vietnam Investment JSC specializes in turnkey M&E solutions — from survey and design to supplying genuine equipment, installation and operation. We have completed over 35 key projects for the healthcare, defense, hotel–resort and industrial sectors.",
     card1Title: "Genuine",
-    card1Desc: "Authorized dealer of Trane, Carrier, Mitsubishi, LG.",
+    card1Desc: "Authorized dealer of Mitsubishi Electric, Trane, Carrier-Toshiba, Panasonic…",
     card2Title: "Turnkey",
     card2Desc: "One point of contact from consultation to long-term maintenance.",
     card3Title: "35+ projects",

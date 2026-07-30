@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { getSettings } from "@/lib/content";
 import { buildAlternates, isLang } from "@/lib/i18n-routing";
 import { getServerT } from "@/lib/i18n-server";
 
@@ -22,6 +23,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default function Page() {
-  return <ContactView />;
+export default async function Page({ params }: PageProps) {
+  const { locale } = await params;
+  if (!isLang(locale)) notFound();
+
+  const settings = await getSettings(locale);
+  return <ContactView settings={settings} />;
 }

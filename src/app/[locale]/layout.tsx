@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { Providers } from "@/components/Providers";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { getCopyOverrides, getFields, getSettings } from "@/lib/content";
 import { buildAlternates, isLang, LANGS } from "@/lib/i18n-routing";
 import { getServerT } from "@/lib/i18n-server";
 
@@ -61,19 +62,28 @@ export default async function LocaleLayout({
   // Chặn param rác (vd /xx/du-an). Proxy chỉ rewrite sang vi|en nên đây là lớp phòng thủ.
   if (!isLang(locale)) notFound();
 
+  // Dữ liệu dùng chung cho mọi trang. Lấy song song vì ba truy vấn này độc lập nhau.
+  const [copyOverrides, fields, settings] = await Promise.all([
+    getCopyOverrides(locale),
+    getFields(locale),
+    getSettings(locale),
+  ]);
+
+  // `data-scroll-behavior` báo cho Next biết html đang bật smooth scroll, để router tạm
+  // tắt nó lúc chuyển route (cuộn về đầu trang phải nhảy dứt khoát, không trôi).
   return (
-    <html lang={locale}>
+    <html lang={locale} data-scroll-behavior="smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>
-        <Providers lang={locale}>
+        <Providers lang={locale} copyOverrides={copyOverrides}>
           <SmoothScroll />
           <Navbar />
           <main>{children}</main>
-          <Footer />
-          <FloatingActions />
+          <Footer fields={fields} settings={settings} />
+          <FloatingActions settings={settings} />
         </Providers>
       </body>
     </html>

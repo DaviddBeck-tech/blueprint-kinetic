@@ -28,6 +28,7 @@ const vi = {
     location: "Địa điểm",
     client: "Chủ đầu tư",
     home: "Trang chủ",
+    language: "Ngôn ngữ",
   },
   footer: {
     tagline:
@@ -81,6 +82,7 @@ const en: typeof vi = {
     location: "Location",
     client: "Client",
     home: "Home",
+    language: "Language",
   },
   footer: {
     tagline:

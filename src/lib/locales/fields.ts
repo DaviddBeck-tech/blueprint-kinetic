@@ -3,14 +3,15 @@ const vi = {
   meta: {
     title: "Lĩnh vực kinh doanh — HBH Vietnam",
     description:
-      "6 nhóm giải pháp M&E, HVAC, BMS của HBH — từ điều hoà cục bộ đến chiller trung tâm và hệ điều khiển toà nhà.",
+      "6 nhóm giải pháp M&E của HBH — điều hoà & thông gió, chiếu sáng, nước nóng trung tâm, khí y tế, điện nhẹ – BMS và tủ điện.",
   },
   hero: {
     eyebrow: "LĨNH VỰC · 06 NHÓM",
     titlePre: "Sáu",
     titleEm: "kỹ thuật lõi.",
     titleAfter: "Một đối tác duy nhất.",
-    subtitle: "Từ điều hoà cục bộ cho căn hộ đến chiller trung tâm và BMS cho toà nhà thông minh.",
+    subtitle:
+      "Từ điều hoà & thông gió đến khí y tế, điện nhẹ – BMS và tủ điện phân phối cho toà nhà thông minh.",
   },
   extended: {
     label: "— NHÓM MỞ RỘNG",
@@ -44,7 +45,7 @@ const en: typeof vi = {
   meta: {
     title: "Business Fields — HBH Vietnam",
     description:
-      "HBH's 6 M&E, HVAC and BMS solution groups — from split air conditioning to central chillers and building management systems.",
+      "HBH's 6 M&E solution groups — HVAC & ventilation, lighting, central hot water, medical gas, ELV – BMS and switchboards.",
   },
   hero: {
     eyebrow: "FIELDS · 06 GROUPS",
@@ -52,7 +53,7 @@ const en: typeof vi = {
     titleEm: "core disciplines.",
     titleAfter: "One single partner.",
     subtitle:
-      "From local split air conditioning for apartments to central chillers and BMS for smart buildings.",
+      "From HVAC and ventilation to medical gas, ELV – BMS and power distribution switchboards for smart buildings.",
   },
   extended: {
     label: "— EXTENDED GROUP",

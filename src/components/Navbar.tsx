@@ -9,13 +9,14 @@ import { Logo } from "@/components/Logo";
 import { LocaleLink as Link } from "@/components/LocaleLink";
 import { persistLanguage } from "@/lib/i18n";
 import { localePath, stripLocale, type Lang } from "@/lib/i18n-routing";
+import { cn } from "@/lib/utils";
 
+// "Liên hệ" KHÔNG nằm trong 2 mảng này: nó luôn là nút CTA đỏ, xem quy tắc breakpoint ở dưới.
 const NAV = [
   { to: "/gioi-thieu", key: "about" as const, hasMenu: true },
   { to: "/du-an", key: "projects" as const },
   { to: "/doi-tac", key: "partners" as const },
   { to: "/tin-tuc", key: "news" as const },
-  { to: "/lien-he", key: "contact" as const },
 ];
 
 /** Mobile nav: mega-menu items (Lĩnh vực · Dịch vụ) trở thành mục ngang hàng, đặt ngay sau Dự án. */
@@ -26,7 +27,6 @@ const MOBILE_NAV = [
   { to: "/dich-vu", key: "services" as const },
   { to: "/doi-tac", key: "partners" as const },
   { to: "/tin-tuc", key: "news" as const },
-  { to: "/lien-he", key: "contact" as const },
 ];
 
 export function Navbar() {
@@ -114,11 +114,15 @@ export function Navbar() {
             })}
           </nav>
 
+          {/* Quy tắc: LangToggle và CTA đỏ chỉ xuất hiện MỘT chỗ ở mỗi bề rộng, cắt tại lg
+              — đúng mốc menu desktop bật/tắt, nên thanh header và drawer không bao giờ chồng nhau.
+              < lg : nằm trong drawer (mobile + tablet)
+              ≥ lg : nằm ở thanh header, drawer đã bị ẩn cả khối */}
           <div className="flex items-center gap-2">
-            <LangToggle className="hidden md:inline-flex" layoutId="lang-pill-desktop" />
+            <LangToggle className="hidden lg:inline-flex" layoutId="lang-pill-desktop" />
             <Link
               href="/lien-he"
-              className="hidden bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 md:inline-block"
+              className="hidden bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background lg:inline-block"
             >
               {t("nav.cta")}
             </Link>
@@ -145,8 +149,18 @@ export function Navbar() {
                   {t(`nav.${item.key}`)}
                 </Link>
               ))}
-              <div className="mt-3 flex items-center gap-3 border-t border-border pt-4">
-                <span className="mono-label text-muted-foreground">NGÔN NGỮ</span>
+              {/* Cả khối drawer đã là lg:hidden nên không cần chặn breakpoint riêng ở đây */}
+              <Link
+                href="/lien-he"
+                onClick={() => setOpen(false)}
+                className="mt-3 block bg-primary px-4 py-3 text-center text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {t("nav.cta")}
+              </Link>
+              <div className="mt-4 flex items-center gap-3 border-t border-border pt-4">
+                <span className="mono-label text-muted-foreground">
+                  {t("common.language")}
+                </span>
                 <LangToggle layoutId="lang-pill-mobile" />
               </div>
             </div>
@@ -182,7 +196,14 @@ function LangToggle({
     <div
       role="group"
       aria-label="Chọn ngôn ngữ"
-      className={`relative inline-flex items-center border border-border bg-muted/40 p-0.5 ${className}`}
+      // cn() bắt buộc ở đây: base có sẵn `inline-flex`, caller truyền `hidden`.
+      // Nối chuỗi thường thì CSS quyết định theo thứ tự trong stylesheet — Tailwind v4
+      // xếp display theo alphabet nên `.inline-flex` đứng sau `.hidden` và luôn thắng
+      // ⇒ `hidden` vô tác dụng. twMerge loại bỏ class xung đột trước khi render.
+      className={cn(
+        "relative inline-flex items-center border border-border bg-muted/40 p-0.5",
+        className,
+      )}
     >
       {(["vi", "en"] as const).map((lng) => {
         const active = current === lng;

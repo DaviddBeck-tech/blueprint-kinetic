@@ -4,35 +4,52 @@ import { LocaleLink as Link } from "@/components/LocaleLink";
 import { motion, AnimatePresence } from "motion/react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { projects, type Project } from "@/lib/data";
+import type { Project, ProjectType } from "@/lib/content/types";
 import { PageHero } from "@/components/PageHero";
-import { useLocalize } from "@/lib/localize";
 
-const TYPES: { id: Project["type"] | "all" }[] = [
+const TYPES: { id: ProjectType | "all" }[] = [
   { id: "all" },
   { id: "hospital" },
-  { id: "defense" },
+  { id: "airport" },
+  { id: "office" },
   { id: "hotel" },
   { id: "factory" },
-  { id: "infra" },
 ];
-const SYSTEMS = ["Tất cả", "VRF", "Chiller", "BMS", "Nước nóng"];
 
-export function ProjectsListView() {
+/**
+ * Bộ lọc hệ thống khớp theo **slug**, không theo nhãn tiếng Việt như trước.
+ * Nhãn đổi theo ngôn ngữ (và sau này do client sửa trong CMS) nhưng slug thì không,
+ * nên bộ lọc không còn hỏng khi chuyển sang EN.
+ *
+ * Mỗi chip gom nhiều slug vì bộ lọc nay theo **nhóm hệ thống**, không theo từng công
+ * nghệ: "HVAC" phủ VRF / Chiller / AHU / Ducting, "ELV & BMS" phủ BMS / ACS / EMS…
+ */
+const SYSTEM_FILTERS: { id: string; labelKey: string; slugs: string[] }[] = [
+  { id: "all", labelKey: "projects.filters.all", slugs: [] },
+  {
+    id: "hvac",
+    labelKey: "projects.systems.hvac",
+    slugs: ["hvac", "vrf", "chiller", "ahu", "ducting"],
+  },
+  { id: "electrical", labelKey: "projects.systems.electrical", slugs: ["electrical", "lighting"] },
+  { id: "elv-bms", labelKey: "projects.systems.elvBms", slugs: ["bms", "elv", "acs", "ems"] },
+  { id: "hot-water", labelKey: "projects.systems.hotWater", slugs: ["hot-water"] },
+  { id: "medical-gas", labelKey: "projects.systems.medicalGas", slugs: ["medical-gas", "pts"] },
+];
+
+export function ProjectsListView({ projects }: { projects: Project[] }) {
   const { t } = useTranslation();
-  const L = useLocalize();
-  const [type, setType] = useState<Project["type"] | "all">("all");
-  const [sys, setSys] = useState("Tất cả");
+  const [type, setType] = useState<ProjectType | "all">("all");
+  const [sys, setSys] = useState("all");
 
-  const filtered = useMemo(
-    () =>
-      projects.filter(
-        (p) =>
-          (type === "all" || p.type === type) &&
-          (sys === "Tất cả" || p.system.some((s) => s.includes(sys))),
-      ),
-    [type, sys],
-  );
+  const filtered = useMemo(() => {
+    const slugs = SYSTEM_FILTERS.find((s) => s.id === sys)?.slugs ?? [];
+    return projects.filter(
+      (p) =>
+        (type === "all" || p.type === type) &&
+        (sys === "all" || p.systemSlugs.some((s) => slugs.includes(s))),
+    );
+  }, [projects, type, sys]);
 
   return (
     <>
@@ -69,17 +86,13 @@ export function ProjectsListView() {
             <span className="mono-label mr-2 text-muted-foreground">
               {t("projects.filters.system")}
             </span>
-            {SYSTEMS.map((s) => (
+            {SYSTEM_FILTERS.map((s) => (
               <button
-                key={s}
-                onClick={() => setSys(s)}
-                className={`mono-label border px-3 py-1.5 transition-colors ${sys === s ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground"}`}
+                key={s.id}
+                onClick={() => setSys(s.id)}
+                className={`mono-label border px-3 py-1.5 transition-colors ${sys === s.id ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground"}`}
               >
-                {s === "Tất cả"
-                  ? t("projects.filters.all")
-                  : s === "Nước nóng"
-                    ? t("projects.systems.hotWater")
-                    : s}
+                {t(s.labelKey)}
               </button>
             ))}
           </div>
@@ -114,8 +127,8 @@ export function ProjectsListView() {
                     <Link href={`/du-an/${p.slug}`} className="block h-full">
                       <div className="relative h-full overflow-hidden rounded-xl">
                         <img
-                          src={p.image}
-                          alt={L(p.name, p.nameEn)}
+                          src={p.image.url}
+                          alt={p.image.alt}
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                           loading="lazy"
                           width={1200}
@@ -123,23 +136,21 @@ export function ProjectsListView() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-transparent to-transparent" />
                         <div className="absolute left-3 top-3 flex gap-2">
-                          {L(p.system, p.systemEn)
-                            .slice(0, 2)
-                            .map((s) => (
-                              <span
-                                key={s}
-                                className="mono-label border border-white/30 bg-black/60 px-2 py-1 text-white backdrop-blur-sm"
-                              >
-                                {s}
-                              </span>
-                            ))}
+                          {p.system.slice(0, 2).map((s) => (
+                            <span
+                              key={s}
+                              className="mono-label border border-white/30 bg-black/60 px-2 py-1 text-white backdrop-blur-sm"
+                            >
+                              {s}
+                            </span>
+                          ))}
                         </div>
                         <div className="absolute inset-x-4 bottom-4 text-white">
                           <div className="mono-label text-white/70">
-                            {L(p.location, p.locationEn).toUpperCase()} · {p.year}
+                            {p.location.toUpperCase()} · {p.year}
                           </div>
                           <div className="mt-2 font-display text-2xl font-bold leading-tight">
-                            {L(p.name, p.nameEn)}
+                            {p.name}
                           </div>
                         </div>
                       </div>

@@ -5,22 +5,23 @@ import { useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
-import { news } from "@/lib/data";
-import { useLocalize } from "@/lib/localize";
+import type { Post, PostCategory } from "@/lib/content/types";
 import { ArrowRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
 
-const CATS = ["Tất cả", "Tin công ty", "Dự án", "Kiến thức kỹ thuật"];
 const PAGE1_SIZE = 4; // Trang 1: 1 bài nổi bật + 3 bài lưới
 const PAGE_SIZE = 6; // Từ trang 2 trở đi: 6 bài/trang
 
-export function NewsView() {
+/** Giá trị "xem tất cả" của bộ lọc — không phải danh mục thật nên không đến từ CMS. */
+const ALL = "all";
+
+export function NewsView({ posts, categories }: { posts: Post[]; categories: PostCategory[] }) {
   const { t } = useTranslation();
-  const L = useLocalize();
-  const [cat, setCat] = useState("Tất cả");
+  // Lọc theo slug danh mục: nhãn đổi theo ngôn ngữ và do client sửa trong CMS, slug thì không.
+  const [cat, setCat] = useState(ALL);
   const [page, setPage] = useState(1);
   const listRef = useRef<HTMLElement>(null);
 
-  const filtered = cat === "Tất cả" ? news : news.filter((n) => n.category === cat);
+  const filtered = cat === ALL ? posts : posts.filter((n) => n.category.slug === cat);
   const totalPages =
     filtered.length <= PAGE1_SIZE ? 1 : 1 + Math.ceil((filtered.length - PAGE1_SIZE) / PAGE_SIZE);
   const currentPage = Math.min(page, totalPages);
@@ -59,13 +60,13 @@ export function NewsView() {
 
       <section ref={listRef} className="mx-auto max-w-[1400px] px-5 py-16 md:px-10 md:py-20">
         <div className="flex flex-wrap gap-2 border-b border-border pb-6">
-          {CATS.map((c) => (
+          {[{ slug: ALL, name: t("news.categories.Tất cả") }, ...categories].map((c) => (
             <button
-              key={c}
-              onClick={() => selectCat(c)}
-              className={`mono-label border px-3 py-1.5 ${cat === c ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground"}`}
+              key={c.slug}
+              onClick={() => selectCat(c.slug)}
+              className={`mono-label border px-3 py-1.5 ${cat === c.slug ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground"}`}
             >
-              {t(`news.categories.${c}`)}
+              {c.name}
             </button>
           ))}
         </div>
@@ -85,8 +86,8 @@ export function NewsView() {
               >
                 <div className="relative aspect-video w-full overflow-hidden rounded-xl">
                   <img
-                    src={featured.image}
-                    alt={L(featured.title, featured.titleEn)}
+                    src={featured.image.url}
+                    alt={featured.image.alt}
                     loading="lazy"
                     decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none"
@@ -94,15 +95,12 @@ export function NewsView() {
                   <div className="absolute inset-x-0 top-0 h-0.75 bg-primary" />
                 </div>
                 <div className="mono-label mt-6 text-primary">
-                  — {t("news.featured.badge")} ·{" "}
-                  {L(featured.category, featured.categoryEn).toUpperCase()}
+                  — {t("news.featured.badge")} · {featured.category.name.toUpperCase()}
                 </div>
                 <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight transition-colors group-hover:text-primary md:text-6xl">
-                  {L(featured.title, featured.titleEn)}
+                  {featured.title}
                 </h2>
-                <p className="mt-4 max-w-2xl text-muted-foreground">
-                  {L(featured.excerpt, featured.excerptEn)}
-                </p>
+                <p className="mt-4 max-w-2xl text-muted-foreground">{featured.excerpt}</p>
                 <div className="mono-label mt-6 text-muted-foreground">{featured.date}</div>
               </Link>
             )}
@@ -112,20 +110,20 @@ export function NewsView() {
                 <Link key={n.slug} href={`/tin-tuc/${n.slug}`} className="group block">
                   <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                     <img
-                      src={n.image}
-                      alt={L(n.title, n.titleEn)}
+                      src={n.image.url}
+                      alt={n.image.alt}
                       loading="lazy"
                       decoding="async"
                       className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none"
                     />
                   </div>
                   <div className="mono-label mt-4 text-primary">
-                    {L(n.category, n.categoryEn).toUpperCase()}
+                    {n.category.name.toUpperCase()}
                   </div>
                   <div className="mt-3 font-display text-2xl font-bold leading-tight transition-colors group-hover:text-primary">
-                    {L(n.title, n.titleEn)}
+                    {n.title}
                   </div>
-                  <p className="mt-2 text-sm text-muted-foreground">{L(n.excerpt, n.excerptEn)}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">{n.excerpt}</p>
                   <div className="mono-label mt-4 text-muted-foreground">{n.date}</div>
                 </Link>
               ))}
@@ -195,13 +193,13 @@ export function NewsView() {
                 {t("news.sidebar.categoriesHeading")}
               </div>
               <ul className="mt-3 space-y-2 text-sm">
-                {CATS.slice(1).map((c) => (
-                  <li key={c}>
+                {categories.map((c) => (
+                  <li key={c.slug}>
                     <button
-                      onClick={() => selectCat(c)}
+                      onClick={() => selectCat(c.slug)}
                       className="text-foreground/80 hover:text-primary"
                     >
-                      {t(`news.categories.${c}`)}
+                      {c.name}
                     </button>
                   </li>
                 ))}

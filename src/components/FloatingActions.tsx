@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { ArrowUp, Phone, MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getLenis } from "@/components/SmoothScroll";
+import type { SiteSettings } from "@/lib/content/types";
 
-export function FloatingActions() {
+export function FloatingActions({ settings }: { settings: SiteSettings }) {
   const { t } = useTranslation();
   const [show, setShow] = useState(false);
   useEffect(() => {
@@ -16,14 +17,14 @@ export function FloatingActions() {
   return (
     <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-2">
       <a
-        href="tel:+84931190001"
+        href={`tel:${settings.phone}`}
         aria-label={t("floating.call")}
         className="grid h-12 w-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-110"
       >
         <Phone className="h-5 w-5" />
       </a>
       <a
-        href="https://zalo.me/84931190001"
+        href={settings.zaloUrl}
         target="_blank"
         rel="noreferrer"
         aria-label={t("floating.zalo")}

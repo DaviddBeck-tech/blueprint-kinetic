@@ -4,11 +4,8 @@ import { LocaleLink as Link } from "@/components/LocaleLink";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
-import { fields, IMG } from "@/lib/data";
-import { useLocalize } from "@/lib/localize";
+import type { Field } from "@/lib/content/types";
 import { ArrowRight } from "lucide-react";
-
-const IMGS = [IMG.chiller, IMG.hotel, IMG.factory, IMG.hospital, IMG.resort, IMG.defense];
 
 const PROCESS = [
   { id: "01", tKey: "fields.process.steps.s1.t", dKey: "fields.process.steps.s1.d" },
@@ -18,9 +15,8 @@ const PROCESS = [
   { id: "05", tKey: "fields.process.steps.s5.t", dKey: "fields.process.steps.s5.d" },
 ];
 
-export function FieldsView() {
+export function FieldsView({ fields }: { fields: Field[] }) {
   const { t } = useTranslation();
-  const L = useLocalize();
   return (
     <>
       <PageHero
@@ -51,8 +47,8 @@ export function FieldsView() {
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img
-                  src={IMGS[i]}
-                  alt={L(f.name, f.nameEn)}
+                  src={f.image.url}
+                  alt={f.image.alt}
                   className="h-full w-full object-cover"
                   loading="lazy"
                   width={1200}
@@ -66,9 +62,9 @@ export function FieldsView() {
               <div>
                 <div className="mono-label text-primary">— {f.id} / 06</div>
                 <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight md:text-6xl">
-                  {L(f.name, f.nameEn)}
+                  {f.name}
                 </h2>
-                <p className="mt-6 text-lg text-muted-foreground">{L(f.desc, f.descEn)}</p>
+                <p className="mt-6 text-lg text-muted-foreground">{f.desc}</p>
                 <div className="mt-8 flex flex-wrap gap-2">
                   {f.brands.map((b) => (
                     <span key={b} className="mono-label border border-border px-3 py-1.5">

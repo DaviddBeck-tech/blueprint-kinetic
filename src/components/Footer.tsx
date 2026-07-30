@@ -1,15 +1,17 @@
 "use client";
 
 import { LocaleLink as Link } from "@/components/LocaleLink";
-import { Phone, Mail, MapPin, Facebook, Linkedin, Youtube } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook, Linkedin } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { fields } from "@/lib/data";
-import { useLocalize } from "@/lib/localize";
+import type { Field, SiteSettings } from "@/lib/content/types";
 import { Logo } from "@/components/Logo";
 
-export function Footer() {
+/**
+ * Footer nằm trong layout nên `fields` và `settings` được layout (Server Component)
+ * lấy sẵn rồi truyền xuống — client component không tự gọi tầng content được.
+ */
+export function Footer({ fields, settings }: { fields: Field[]; settings: SiteSettings }) {
   const { t } = useTranslation();
-  const L = useLocalize();
   return (
     <footer className="relative bg-secondary text-secondary-foreground">
       <div className="h-px w-full bg-primary" />
@@ -26,7 +28,7 @@ export function Footer() {
               {t("footer.tax")}
             </p>
             <div className="mt-6 flex gap-2">
-              {[Facebook, Linkedin, Youtube].map((Icon, i) => (
+              {[Facebook, Linkedin].map((Icon, i) => (
                 <a
                   key={i}
                   href="#"
@@ -66,7 +68,7 @@ export function Footer() {
               {fields.map((f) => (
                 <li key={f.id} className="flex gap-2 text-secondary-foreground/70">
                   <span className="mono-label text-primary">{f.id}</span>
-                  <span>{L(f.name, f.nameEn)}</span>
+                  <span>{f.name}</span>
                 </li>
               ))}
             </ul>
@@ -79,18 +81,18 @@ export function Footer() {
             <ul className="mt-4 space-y-3 text-sm">
               <li className="flex gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <span className="text-secondary-foreground/80">{t("footer.address")}</span>
+                <span className="text-secondary-foreground/80">{settings.address}</span>
               </li>
               <li className="flex gap-3">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <a href="tel:+84931190001" className="hover:text-primary">
-                  +84 931 190 001
+                <a href={`tel:${settings.phone}`} className="hover:text-primary">
+                  {settings.phoneDisplay}
                 </a>
               </li>
               <li className="flex gap-3">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <a href="mailto:info@hbhvietnam.vn" className="hover:text-primary">
-                  info@hbhvietnam.vn
+                <a href={`mailto:${settings.email}`} className="hover:text-primary">
+                  {settings.email}
                 </a>
               </li>
             </ul>

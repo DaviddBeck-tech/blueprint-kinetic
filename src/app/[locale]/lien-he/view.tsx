@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { PageHero } from "@/components/PageHero";
+import type { SiteSettings } from "@/lib/content/types";
 import { MapPin, Phone, Mail, Clock, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,7 +28,7 @@ const SYSTEMS = ["vrf", "chiller", "hotWater", "bms", "lighting", "other"];
 const RECAPTCHA_SITE_KEY =
   process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
 
-export function ContactView() {
+export function ContactView({ settings }: { settings: SiteSettings }) {
   const { t } = useTranslation();
   const FAQ = t("contact.faq.items", { returnObjects: true }) as { q: string; a: string }[];
   const [values, setValues] = useState({
@@ -205,23 +206,23 @@ export function ContactView() {
             <div className="mt-6 space-y-4 text-sm">
               <div className="flex gap-3">
                 <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                <span>{t("contact.info.address")}</span>
+                <span>{settings.address}</span>
               </div>
               <div className="flex gap-3">
                 <Phone className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                <a href="tel:+84931190001" className="hover:text-primary">
-                  +84 931 190 001
+                <a href={`tel:${settings.phone}`} className="hover:text-primary">
+                  {settings.phoneDisplay}
                 </a>
               </div>
               <div className="flex gap-3">
                 <Mail className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                <a href="mailto:info@hbhvietnam.vn" className="hover:text-primary">
-                  info@hbhvietnam.vn
+                <a href={`mailto:${settings.email}`} className="hover:text-primary">
+                  {settings.email}
                 </a>
               </div>
               <div className="flex gap-3">
                 <Clock className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                <span>{t("contact.info.hours")}</span>
+                <span>{settings.hours}</span>
               </div>
             </div>
           </div>

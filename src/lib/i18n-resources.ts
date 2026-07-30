@@ -1,3 +1,5 @@
+import { deepMerge } from "./content/merge";
+import type { CopyOverrides } from "./content/types";
 import { common } from "./locales/common";
 import { home } from "./locales/home";
 import { about } from "./locales/about";
@@ -39,11 +41,38 @@ export const LANGS: readonly Lang[] = ["vi", "en"];
 export const DEFAULT_LANG: Lang = "vi";
 export const COOKIE_NAME = "hbh-lang";
 
-/** Resources dùng chung cho cả client (react-i18next) và server (generateMetadata). */
+/**
+ * Resources **mặc định** — nguồn chữ nằm ngay trong repo, dùng chung cho client
+ * (react-i18next) và server (generateMetadata).
+ *
+ * Đây là "bản default" của site: chưa cắm CMS thì toàn bộ chữ đến từ đây, site vẫn
+ * đầy đủ và đúng thiết kế.
+ */
 export const resources = {
   vi: { translation: vi },
   en: { translation: en },
-} as const;
+};
+
+export type Translation = typeof vi;
+
+/**
+ * Trộn bản ghi đè từ CMS lên trên defaults.
+ *
+ * Chỉ ngôn ngữ đang hiển thị được đè; bundle còn lại giữ nguyên để `fallbackLng`
+ * vẫn hoạt động. Object rỗng (trường hợp phổ biến nhất — CMS chưa cắm, hoặc client
+ * chưa sửa chữ nào) trả về đúng object defaults, không tạo bản sao thừa.
+ *
+ * ⚠️ Server và client **phải gọi hàm này với cùng một `overrides`**, nếu không HTML
+ * prerender sẽ khác HTML client dựng lại → lệch hydration.
+ */
+export function buildResources(locale: Lang, overrides?: CopyOverrides) {
+  if (!overrides || Object.keys(overrides).length === 0) return resources;
+
+  return {
+    ...resources,
+    [locale]: { translation: deepMerge(locale === "en" ? en : vi, overrides) },
+  };
+}
 
 /** Chuẩn hoá một giá trị bất kỳ về Lang hợp lệ. */
 export function normalizeLang(value?: string | null): Lang {

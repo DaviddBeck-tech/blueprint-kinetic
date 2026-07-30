@@ -3,7 +3,8 @@
 import { createInstance, type i18n as I18nInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 
-import { COOKIE_NAME, DEFAULT_LANG, resources, type Lang } from "./i18n-resources";
+import type { CopyOverrides } from "./content/types";
+import { buildResources, COOKIE_NAME, DEFAULT_LANG, type Lang } from "./i18n-resources";
 
 export { COOKIE_NAME, parseLang, normalizeLang, type Lang } from "./i18n-resources";
 
@@ -13,11 +14,17 @@ export { COOKIE_NAME, parseLang, normalizeLang, type Lang } from "./i18n-resourc
  * Không dùng singleton toàn cục như bản Vite cũ: trên server Next.js nhiều request
  * chạy song song trong cùng process, singleton + changeLanguage sẽ rò ngôn ngữ
  * từ request này sang request khác. Mỗi <Providers> giữ một instance của chính nó.
+ *
+ * `overrides` là chữ do client sửa trong CMS, được layout lấy ở phía server rồi truyền
+ * xuống. Truyền cùng giá trị mà server đã dùng để render thì HTML hai bên khớp nhau.
  */
-export function createI18nInstance(lng: Lang = DEFAULT_LANG): I18nInstance {
+export function createI18nInstance(
+  lng: Lang = DEFAULT_LANG,
+  overrides?: CopyOverrides,
+): I18nInstance {
   const instance = createInstance();
   instance.use(initReactI18next).init({
-    resources,
+    resources: buildResources(lng, overrides),
     lng,
     fallbackLng: DEFAULT_LANG,
     interpolation: { escapeValue: false },

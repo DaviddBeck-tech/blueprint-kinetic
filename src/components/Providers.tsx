@@ -6,6 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { I18nextProvider } from "react-i18next";
 import { Toaster } from "sonner";
 
+import type { CopyOverrides } from "@/lib/content/types";
 import { createI18nInstance } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n-resources";
 
@@ -14,9 +15,21 @@ import type { Lang } from "@/lib/i18n-resources";
  *
  * `lang` do Server Component (`app/[locale]/layout.tsx`) lấy từ route param truyền xuống,
  * nên i18next khởi tạo đúng ngôn ngữ mà server vừa render → không lệch hydration.
+ *
+ * `copyOverrides` là chữ client đã sửa trong CMS. Chỉ truyền phần ghi đè (thường rỗng),
+ * không truyền cả bộ resources: defaults đã nằm sẵn trong bundle JS và được cache,
+ * gửi lại toàn bộ qua payload mỗi trang là lãng phí.
  */
-export function Providers({ lang, children }: { lang: Lang; children: ReactNode }) {
-  const [i18n] = useState(() => createI18nInstance(lang));
+export function Providers({
+  lang,
+  copyOverrides,
+  children,
+}: {
+  lang: Lang;
+  copyOverrides?: CopyOverrides;
+  children: ReactNode;
+}) {
+  const [i18n] = useState(() => createI18nInstance(lang, copyOverrides));
   const [queryClient] = useState(() => new QueryClient());
 
   // Khi điều hướng client-side giữa 2 locale (/du-an ↔ /en/du-an), layout không remount

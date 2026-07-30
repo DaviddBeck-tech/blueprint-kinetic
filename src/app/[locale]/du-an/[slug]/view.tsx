@@ -3,14 +3,18 @@
 import { LocaleLink as Link } from "@/components/LocaleLink";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { projects, type Project } from "@/lib/data";
+import type { Project } from "@/lib/content/types";
+import { RichText } from "@/components/RichText";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useLocalize } from "@/lib/localize";
 
-export function ProjectDetailView({ project: p }: { project: Project }) {
+export function ProjectDetailView({
+  project: p,
+  related: others,
+}: {
+  project: Project;
+  related: Project[];
+}) {
   const { t } = useTranslation();
-  const L = useLocalize();
-  const others = projects.filter((o) => o.slug !== p.slug).slice(0, 3);
 
   return (
     <>
@@ -25,19 +29,19 @@ export function ProjectDetailView({ project: p }: { project: Project }) {
           </Link>
           <div className="mt-8 flex items-center gap-3">
             <span className="h-px w-8 bg-primary" />
-            <span className="mono-label text-primary">{L(p.system, p.systemEn).join(" · ")}</span>
+            <span className="mono-label text-primary">{p.system.join(" · ")}</span>
             <span className="mono-label ml-auto text-muted-foreground">YEAR · {p.year}</span>
           </div>
           <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.1] md:text-7xl lg:text-8xl">
-            {L(p.name, p.nameEn)}
+            {p.name}
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">{L(p.scope, p.scopeEn)}</p>
+          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">{p.scope}</p>
         </div>
 
         <div className="relative aspect-[16/9] w-full overflow-hidden">
           <img
-            src={p.image}
-            alt={L(p.name, p.nameEn)}
+            src={p.image.url}
+            alt={p.image.alt}
             className="h-full w-full object-cover"
             width={1600}
             height={900}
@@ -58,20 +62,27 @@ export function ProjectDetailView({ project: p }: { project: Project }) {
             <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">
               {t("projects.detail.scopeHeading")}
             </h2>
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              {L(p.scope, p.scopeEn)}. {t("projects.detail.scopeBody")}
-            </p>
-            <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              {t("projects.detail.warrantyBody")}
-            </p>
+            {/* Thân bài do client soạn trong CMS. Chưa có thì dùng đoạn mô tả mặc định. */}
+            {p.body ? (
+              <RichText html={p.body} className="mt-6" />
+            ) : (
+              <>
+                <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+                  {p.scope}. {t("projects.detail.scopeBody")}
+                </p>
+                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                  {t("projects.detail.warrantyBody")}
+                </p>
+              </>
+            )}
 
-            {p.gallery && (
+            {p.gallery.length > 0 && (
               <div className="mt-12 grid gap-3 md:grid-cols-2">
-                {p.gallery.map((g: string, i: number) => (
+                {p.gallery.map((g, i) => (
                   <img
                     key={i}
-                    src={g}
-                    alt={`${L(p.name, p.nameEn)} — ${i + 1}`}
+                    src={g.url}
+                    alt={g.alt}
                     loading="lazy"
                     className="aspect-[4/3] w-full object-cover"
                   />
@@ -85,10 +96,10 @@ export function ProjectDetailView({ project: p }: { project: Project }) {
               <div className="mono-label text-primary">— SPEC SHEET</div>
               <dl className="mt-4 space-y-4 text-sm">
                 {[
-                  [t("projects.detail.spec.client"), L(p.client, p.clientEn)],
-                  [t("projects.detail.spec.location"), L(p.location, p.locationEn)],
+                  [t("projects.detail.spec.client"), p.client],
+                  [t("projects.detail.spec.location"), p.location],
                   [t("projects.detail.spec.year"), String(p.year)],
-                  [t("projects.detail.spec.system"), L(p.system, p.systemEn).join(", ")],
+                  [t("projects.detail.spec.system"), p.system.join(", ")],
                   [t("projects.detail.spec.type"), p.type.toUpperCase()],
                 ].map(([k, v]) => (
                   <div
@@ -125,8 +136,8 @@ export function ProjectDetailView({ project: p }: { project: Project }) {
               <Link key={o.slug} href={`/du-an/${o.slug}`} className="group block">
                 <div className="relative aspect-[4/5] overflow-hidden">
                   <img
-                    src={o.image}
-                    alt={L(o.name, o.nameEn)}
+                    src={o.image.url}
+                    alt={o.image.alt}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
                     width={1200}
@@ -135,9 +146,9 @@ export function ProjectDetailView({ project: p }: { project: Project }) {
                   <div className="absolute inset-0 bg-gradient-to-t from-secondary/70 via-transparent to-transparent" />
                   <div className="absolute inset-x-4 bottom-4 text-white">
                     <div className="mono-label text-white/70">
-                      {L(o.location, o.locationEn).toUpperCase()} · {o.year}
+                      {o.location.toUpperCase()} · {o.year}
                     </div>
-                    <div className="mt-2 font-display text-xl font-bold">{L(o.name, o.nameEn)}</div>
+                    <div className="mt-2 font-display text-xl font-bold">{o.name}</div>
                   </div>
                 </div>
               </Link>

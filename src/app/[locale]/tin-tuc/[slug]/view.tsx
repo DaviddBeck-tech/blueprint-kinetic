@@ -3,14 +3,12 @@
 import { LocaleLink as Link } from "@/components/LocaleLink";
 import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { news, type NewsItem } from "@/lib/data";
-import { useLocalize } from "@/lib/localize";
+import type { Post } from "@/lib/content/types";
+import { RichText } from "@/components/RichText";
 import { ArrowLeft } from "lucide-react";
 
-export function NewsDetailView({ post }: { post: NewsItem }) {
+export function NewsDetailView({ post, related }: { post: Post; related: Post[] }) {
   const { t } = useTranslation();
-  const L = useLocalize();
-  const related = news.filter((n) => n.slug !== post.slug).slice(0, 3);
 
   return (
     <>
@@ -24,12 +22,12 @@ export function NewsDetailView({ post }: { post: NewsItem }) {
             <ArrowLeft className="h-3.5 w-3.5" /> {t("nav.news")}
           </Link>
           <div className="mono-label mt-8 text-primary">
-            {L(post.category, post.categoryEn).toUpperCase()} · {post.date}
+            {post.category.name.toUpperCase()} · {post.date}
           </div>
           <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.1] md:text-6xl">
-            {L(post.title, post.titleEn)}
+            {post.title}
           </h1>
-          <p className="mt-6 text-xl text-muted-foreground">{L(post.excerpt, post.excerptEn)}</p>
+          <p className="mt-6 text-xl text-muted-foreground">{post.excerpt}</p>
         </div>
       </section>
 
@@ -41,8 +39,8 @@ export function NewsDetailView({ post }: { post: NewsItem }) {
           className="relative aspect-video w-full overflow-hidden rounded-xl"
         >
           <img
-            src={post.image}
-            alt={L(post.title, post.titleEn)}
+            src={post.image.url}
+            alt={post.image.alt}
             decoding="async"
             className="h-full w-full object-cover"
           />
@@ -56,12 +54,22 @@ export function NewsDetailView({ post }: { post: NewsItem }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="prose prose-lg max-w-none space-y-6 text-lg leading-relaxed text-foreground/85"
         >
-          <p>{t("news.detail.body.p1")}</p>
-          <p>{t("news.detail.body.p2")}</p>
-          <h2 className="font-display text-3xl font-bold">{t("news.detail.body.h2")}</h2>
-          <p>{t("news.detail.body.p3")}</p>
+          {/*
+            Thân bài thật đến từ CMS. Chưa có CMS thì rơi về đoạn mô tả mặc định trong
+            `locales/news.ts` — lưu ý đoạn mặc định này DÙNG CHUNG cho mọi bài, nên nội
+            dung riêng của từng bài phải do client nhập trong WordPress.
+          */}
+          {post.body ? (
+            <RichText html={post.body} />
+          ) : (
+            <div className="space-y-6 text-lg leading-relaxed text-foreground/85">
+              <p>{t("news.detail.body.p1")}</p>
+              <p>{t("news.detail.body.p2")}</p>
+              <h2 className="font-display text-3xl font-bold">{t("news.detail.body.h2")}</h2>
+              <p>{t("news.detail.body.p3")}</p>
+            </div>
+          )}
         </motion.div>
       </article>
 
@@ -79,18 +87,16 @@ export function NewsDetailView({ post }: { post: NewsItem }) {
               <Link key={r.slug} href={`/tin-tuc/${r.slug}`} className="group block">
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                   <img
-                    src={r.image}
-                    alt={L(r.title, r.titleEn)}
+                    src={r.image.url}
+                    alt={r.image.alt}
                     loading="lazy"
                     decoding="async"
                     className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none"
                   />
                 </div>
-                <div className="mono-label mt-4 text-primary">
-                  {L(r.category, r.categoryEn).toUpperCase()}
-                </div>
+                <div className="mono-label mt-4 text-primary">{r.category.name.toUpperCase()}</div>
                 <div className="mt-3 font-display text-xl font-bold leading-tight group-hover:text-primary">
-                  {L(r.title, r.titleEn)}
+                  {r.title}
                 </div>
                 <div className="mono-label mt-3 text-muted-foreground">{r.date}</div>
               </Link>
