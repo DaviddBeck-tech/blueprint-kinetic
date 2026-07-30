@@ -121,7 +121,10 @@ export function ServicesView() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-secondary text-secondary-foreground">
+      {/* Không đặt border: cạnh trên đã có border-b của section quy trình, cạnh dưới là
+          vạch đỏ accent ở đỉnh footer — thêm border-border (xám 90%) vào đây sẽ hiện
+          thành vạch trắng trên nền ink và đè lên vạch đỏ. */}
+      <section className="bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-10 md:py-24">
           <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
             <h2 className="font-display text-4xl font-extrabold md:text-6xl lg:col-span-8">

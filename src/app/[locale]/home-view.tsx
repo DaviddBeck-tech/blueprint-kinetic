@@ -625,7 +625,11 @@ function ClientsGrid({ clients }: { clients: Partner[] }) {
         <h2 className="mt-4 max-w-3xl font-display text-4xl font-extrabold leading-tight md:text-5xl">
           {t("home.clients.heading")}
         </h2>
-        <div className="mt-12 grid grid-cols-2 divide-x divide-y divide-border border border-border sm:grid-cols-3 lg:grid-cols-5">
+        {/* Kẻ ô: khung chỉ lấy border-t/border-l, mỗi ô tự vẽ border-r/border-b
+            ⇒ mọi đường đúng 1px và thẳng hàng ở mọi số cột. Dùng
+            divide-x/divide-y + border cả khung thì ô cột cuối / hàng cuối đè
+            thêm border của khung → line 2px, lệch với các line bên trong. */}
+        <div className="mt-12 grid grid-cols-2 border-l border-t border-border sm:grid-cols-3 lg:grid-cols-5">
           {clients.map((c, i) => (
             <motion.div
               key={c.name}
@@ -633,7 +637,7 @@ function ClientsGrid({ clients }: { clients: Partner[] }) {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.04 }}
-              className="group grid aspect-3/2 place-items-center p-6 text-center"
+              className="group grid aspect-3/2 place-items-center border-b border-r border-border p-6 text-center"
             >
               <BrandLogo
                 name={c.name}

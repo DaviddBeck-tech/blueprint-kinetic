@@ -123,13 +123,15 @@ function PartnerBlock({
           </div>
           <p className="max-w-md text-sm text-muted-foreground">{note}</p>
         </div>
-        <div
-          className={`mt-10 grid divide-x divide-y divide-border border border-border ${gridClass}`}
-        >
+        {/* Kẻ ô: khung chỉ lấy border-t/border-l, mỗi ô tự vẽ border-r/border-b
+            ⇒ mọi đường đúng 1px và thẳng hàng ở mọi số cột. Dùng
+            divide-x/divide-y + border cả khung thì ô cột cuối / hàng cuối đè
+            thêm border của khung → line 2px, lệch với các line bên trong. */}
+        <div className={`mt-10 grid border-l border-t border-border ${gridClass}`}>
           {items.map((item) => (
             <div
               key={item.name}
-              className="group grid aspect-3/2 place-items-center p-6 transition-colors hover:bg-accent"
+              className="group grid aspect-3/2 place-items-center border-b border-r border-border p-6 transition-colors hover:bg-accent"
             >
               <BrandLogo
                 name={item.name}
